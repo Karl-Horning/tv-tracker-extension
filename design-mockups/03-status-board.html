@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TV Tracker — Status Board design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EFF3F1;
+    --panel:#FFFFFF;
+    --ink:#26303A;
+    --green:#2E7D5B;
+    --green-bg:#E3F0E9;
+    --amber:#B6791F;
+    --amber-bg:#F6EBD8;
+    --rose:#A4453B;
+    --rose-bg:#F4E4E1;
+    --line:#DDE3E0;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; }
+  body{ font-family:'Atkinson Hyperlegible', Verdana, Tahoma, sans-serif; background:#E7E5E1; color:var(--ink); }
+  .stage{ min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:40px 16px 80px; }
+  .stage-label{ font-size:13px; color:#5b5750; margin:0 0 16px; }
+  .stage-label a{ color:var(--green); }
+  .browser-chrome{ width:380px; }
+  .toolbar{ display:flex; align-items:center; gap:6px; background:#D8D5CE; border-radius:10px 10px 0 0; padding:8px 12px; }
+  .toolbar .dot{ width:9px; height:9px; border-radius:50%; background:#B6B2A8; display:inline-block; }
+  .toolbar-title{ margin-left:8px; font-size:11px; letter-spacing:.02em; color:#6b675f; }
+  .popup{ width:380px; max-height:600px; overflow-y:auto; background:var(--bg); box-shadow:0 16px 32px rgba(0,0,0,.2); border-radius:0 0 10px 10px; }
+  :focus-visible{ outline:3px solid var(--green); outline-offset:2px; }
+  @media (prefers-reduced-motion:reduce){ *{ animation:none!important; transition:none!important; } }
+
+  .popup-header{ display:flex; align-items:center; justify-content:space-between; padding:16px 18px; background:var(--panel); border-bottom:1px solid var(--line); }
+  .popup-header h1{ font-family:'Barlow Semi Condensed', sans-serif; font-weight:700; font-size:21px; letter-spacing:.01em; margin:0; }
+  .add-btn{
+    display:flex; align-items:center; gap:6px; background:var(--green); color:#fff; border:none; border-radius:8px;
+    padding:9px 14px; font-family:'Atkinson Hyperlegible',sans-serif; font-weight:700; font-size:14px; cursor:pointer; min-height:40px;
+  }
+  .add-btn svg{ width:16px; height:16px; }
+
+  .section{ margin:14px 14px 0; }
+  .section:last-of-type{ margin-bottom:14px; }
+  .section-head{ display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:7px 7px 0 0; }
+  .section-head .indicator{ width:9px; height:9px; border-radius:50%; flex:0 0 auto; }
+  .section-head h2{ font-family:'Barlow Semi Condensed', sans-serif; font-weight:700; font-size:14.5px; letter-spacing:.02em; margin:0; flex:1 1 auto; }
+  .section-head .count{ font-size:12px; font-weight:700; padding:2px 8px; border-radius:999px; background:rgba(0,0,0,.08); }
+
+  .section.fresh .section-head{ background:var(--green-bg); color:var(--green); }
+  .section.fresh .indicator{ background:var(--green); }
+  .section.upcoming .section-head{ background:var(--amber-bg); color:var(--amber); }
+  .section.upcoming .indicator{ background:var(--amber); }
+  .section.hiatus .section-head{ background:#EAEAEA; color:#5b5750; }
+  .section.hiatus .indicator{ background:#9b958a; }
+  .section.ended .section-head{ background:var(--rose-bg); color:var(--rose); }
+  .section.ended .indicator{ background:var(--rose); }
+
+  .section-body{ background:var(--panel); border:1px solid var(--line); border-top:none; border-radius:0 0 7px 7px; }
+  .board-row{ display:flex; gap:12px; align-items:flex-start; padding:12px 12px; border-bottom:1px solid var(--line); }
+  .board-row:last-child{ border-bottom:none; }
+  .row-main{ flex:1 1 auto; min-width:0; }
+  .show-name{ font-weight:700; font-size:14.5px; margin:0 0 4px; }
+  .ep-line{ display:flex; gap:6px; align-items:flex-start; font-size:13px; line-height:1.5; color:var(--ink); margin:0; }
+  .ep-line svg{ width:15px; height:15px; flex:0 0 auto; margin-top:1px; color:#7a8580; }
+  .remove-btn{
+    flex:0 0 auto; width:32px; height:32px; border-radius:7px; border:1.5px solid var(--line);
+    background:transparent; color:#8a9088; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .remove-btn:hover{ border-color:var(--rose); color:var(--rose); }
+  .remove-btn svg{ width:15px; height:15px; }
+
+  .popup-footer{ display:flex; align-items:center; justify-content:space-between; padding:10px 18px; font-size:12px; color:#5b6560; }
+  .refresh-btn{ background:none; border:none; color:var(--green); font-weight:700; font-size:12.5px; cursor:pointer; display:flex; align-items:center; gap:5px; padding:6px; }
+  .refresh-btn svg{ width:14px; height:14px; }
+  .visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <p class="stage-label">Design 3 of 6 &mdash; Status Board &middot; <a href="index.html">View all designs</a></p>
+  <div class="browser-chrome">
+    <div class="toolbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="toolbar-title">Extensions</span></div>
+    <div class="popup" role="region" aria-label="TV Tracker">
+      <header class="popup-header">
+        <h1>TV Tracker</h1>
+        <button class="add-btn" type="button">
+          <svg viewBox="0 0 20 20"><path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Add show
+        </button>
+      </header>
+      <main>
+
+        <section class="section fresh">
+          <div class="section-head"><span class="indicator" aria-hidden="true"></span><h2>Aired recently</h2><span class="count">2</span></div>
+          <div class="section-body">
+            <div class="board-row">
+              <div class="row-main">
+                <p class="show-name">Bob&rsquo;s Burgers</p>
+                <p class="ep-line"><svg viewBox="0 0 20 20"><path d="M4 10l4 4 8-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>S16E19 &ldquo;Bun Voyage&rdquo; &mdash; Jun 28, 2026</p>
+              </div>
+              <button class="remove-btn" type="button"><svg viewBox="0 0 20 20"><path d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden">Remove Bob's Burgers</span></button>
+            </div>
+            <div class="board-row">
+              <div class="row-main">
+                <p class="show-name">The Simpsons</p>
+                <p class="ep-line"><svg viewBox="0 0 20 20"><path d="M4 10l4 4 8-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>S37E18 &ldquo;Spring-Cleaning Frenzy&rdquo; &mdash; Jun 21, 2026</p>
+              </div>
+              <button class="remove-btn" type="button"><svg viewBox="0 0 20 20"><path d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden">Remove The Simpsons</span></button>
+            </div>
+          </div>
+        </section>
+
+        <section class="section upcoming">
+          <div class="section-head"><span class="indicator" aria-hidden="true"></span><h2>Coming up</h2><span class="count">3</span></div>
+          <div class="section-body">
+            <div class="board-row">
+              <div class="row-main">
+                <p class="show-name">The Simpsons</p>
+                <p class="ep-line"><svg viewBox="0 0 20 20"><rect x="3" y="4" width="14" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 8h14M6.5 2.5v3M13.5 2.5v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>S37E19 &ldquo;The Long Goodbye&rdquo; &mdash; Jul 5, 2026</p>
+              </div>
+              <button class="remove-btn" type="button"><svg viewBox="0 0 20 20"><path d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden">Remove The Simpsons</span></button>
+            </div>
+            <div class="board-row">
+              <div class="row-main">
+                <p class="show-name">Bob&rsquo;s Burgers</p>
+                <p class="ep-line"><svg viewBox="0 0 20 20"><rect x="3" y="4" width="14" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 8h14M6.5 2.5v3M13.5 2.5v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>S16E20 &ldquo;Glued Together&rdquo; &mdash; Jul 12, 2026</p>
+              </div>
+              <button class="remove-btn" type="button"><svg viewBox="0 0 20 20"><path d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden">Remove Bob's Burgers</span></button>
+            </div>
+            <div class="board-row">
+              <div class="row-main">
+                <p class="show-name">American Dad!</p>
+                <p class="ep-line"><svg viewBox="0 0 20 20"><rect x="3" y="4" width="14" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 8h14M6.5 2.5v3M13.5 2.5v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>S21E04 &ldquo;Francine Unfiltered&rdquo; &mdash; Jul 19, 2026</p>
+              </div>
+              <button class="remove-btn" type="button"><svg viewBox="0 0 20 20"><path d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden">Remove American Dad!</span></button>
+            </div>
+          </div>
+        </section>
+
+        <section class="section hiatus">
+          <div class="section-head"><span class="indicator" aria-hidden="true"></span><h2>On hiatus</h2><span class="count">2</span></div>
+          <div class="section-body">
+            <div class="board-row">
+              <div class="row-main">
+                <p class="show-name">Family Guy</p>
+                <p class="ep-line"><svg viewBox="0 0 20 20"><rect x="5" y="3" width="3.2" height="14" rx="1" fill="currentColor"/><rect x="11.8" y="3" width="3.2" height="14" rx="1" fill="currentColor"/></svg>Last aired Jun 14 &mdash; returns fall 2026</p>
+              </div>
+              <button class="remove-btn" type="button"><svg viewBox="0 0 20 20"><path d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden">Remove Family Guy</span></button>
+            </div>
+            <div class="board-row">
+              <div class="row-main">
+                <p class="show-name">South Park</p>
+                <p class="ep-line"><svg viewBox="0 0 20 20"><rect x="5" y="3" width="3.2" height="14" rx="1" fill="currentColor"/><rect x="11.8" y="3" width="3.2" height="14" rx="1" fill="currentColor"/></svg>Last aired May 28 &mdash; next date TBA</p>
+              </div>
+              <button class="remove-btn" type="button"><svg viewBox="0 0 20 20"><path d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden">Remove South Park</span></button>
+            </div>
+          </div>
+        </section>
+
+        <section class="section ended">
+          <div class="section-head"><span class="indicator" aria-hidden="true"></span><h2>No upcoming episode</h2><span class="count">1</span></div>
+          <div class="section-body">
+            <div class="board-row">
+              <div class="row-main">
+                <p class="show-name">Robot Chicken</p>
+                <p class="ep-line"><svg viewBox="0 0 20 20"><path d="M5 2v16M5 3h9l-2.5 3L14 9H5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Last aired Apr 18 &mdash; not yet renewed</p>
+              </div>
+              <button class="remove-btn" type="button"><svg viewBox="0 0 20 20"><path d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden">Remove Robot Chicken</span></button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+      <footer class="popup-footer">
+        <span>Updated 2:14 PM</span>
+        <button class="refresh-btn" type="button">
+          <svg viewBox="0 0 20 20"><path d="M16 10a6 6 0 11-1.8-4.3M16 3v4h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Refresh
+        </button>
+      </footer>
+    </div>
+  </div>
+</div>
+</body>
+</html>
