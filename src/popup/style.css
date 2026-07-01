@@ -311,6 +311,106 @@ body {
     border-top: 1px solid var(--line);
 }
 
+/* === Search panel ================================================= */
+
+.search-panel {
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+}
+
+.search-input {
+    flex: 1;
+    height: 38px;
+    padding: 0 10px;
+    border: 1.5px solid var(--line);
+    border-radius: 7px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.9375rem;
+    letter-spacing: 0.015em;
+}
+
+.search-input:focus {
+    outline: 3px solid var(--green);
+    outline-offset: 2px;
+    border-color: var(--green);
+}
+
+.search-results {
+    list-style: none;
+    max-height: 320px;
+    overflow-y: auto;
+    border-top: 1px solid var(--line);
+}
+
+.search-result {
+    border-bottom: 1px solid var(--line);
+}
+
+.search-result:last-child {
+    border-bottom: none;
+}
+
+.search-result-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+}
+
+.search-result-btn:hover {
+    background: var(--green-bg);
+}
+
+.search-result-btn:focus-visible {
+    outline: 3px solid var(--green);
+    outline-offset: -3px;
+}
+
+.search-result-name {
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    color: var(--ink);
+    letter-spacing: 0.015em;
+}
+
+.search-result-meta {
+    font-family: inherit;
+    font-size: 0.8125rem;
+    color: var(--muted);
+}
+
+.search-result--empty {
+    padding: 14px;
+    color: var(--muted);
+    font-size: 0.875rem;
+}
+
+/* === Empty state ================================================== */
+
+.empty-state {
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+}
+
 /* === Utility ====================================================== */
 
 .visually-hidden {
