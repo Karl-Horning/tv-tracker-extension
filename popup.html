@@ -5,10 +5,455 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>TV Tracker</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Semi+Condensed:wght@600;700&display=swap"
+            rel="stylesheet"
+        />
     </head>
     <body>
-        <h1>TV Tracker</h1>
-        <p id="status">Loading&hellip;</p>
+        <div id="app">
+            <!-- ── Header ─────────────────────────────────────────── -->
+            <header class="app-header">
+                <h1 class="app-title">TV Tracker</h1>
+                <button class="btn btn-primary" type="button" id="btn-add-show">
+                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                        <path
+                            d="M10 3v14M3 10h14"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                        />
+                    </svg>
+                    Add show
+                </button>
+            </header>
+
+            <!-- ── Show sections ──────────────────────────────────── -->
+            <main class="show-sections" aria-label="Tracked shows">
+                <!-- Aired recently -->
+                <section
+                    class="status-section status-section--fresh"
+                    aria-labelledby="heading-fresh"
+                >
+                    <div class="section-head">
+                        <span
+                            class="section-indicator"
+                            aria-hidden="true"
+                        ></span>
+                        <h2 class="section-label" id="heading-fresh">
+                            Aired recently
+                        </h2>
+                        <span class="section-count" aria-hidden="true">2</span>
+                    </div>
+                    <ul class="section-body">
+                        <li class="show-row">
+                            <div class="show-info">
+                                <p class="show-name">Bob&rsquo;s Burgers</p>
+                                <p class="show-ep">
+                                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                                        <path
+                                            d="M4 10l4 4 8-8"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        />
+                                    </svg>
+                                    <span
+                                        >S16E19 &ldquo;Bun Voyage&rdquo; &mdash;
+                                        <time datetime="2026-06-28"
+                                            >Jun 28, 2026</time
+                                        ></span
+                                    >
+                                </p>
+                            </div>
+                            <button class="btn-remove" type="button" aria-label="Remove Bob's Burgers">
+                                <svg viewBox="0 0 20 20" aria-hidden="true">
+                                    <path
+                                        d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.6"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </li>
+                        <li class="show-row">
+                            <div class="show-info">
+                                <p class="show-name">The Simpsons</p>
+                                <p class="show-ep">
+                                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                                        <path
+                                            d="M4 10l4 4 8-8"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        />
+                                    </svg>
+                                    <span
+                                        >S37E18 &ldquo;Spring-Cleaning
+                                        Frenzy&rdquo; &mdash;
+                                        <time datetime="2026-06-21"
+                                            >Jun 21, 2026</time
+                                        ></span
+                                    >
+                                </p>
+                            </div>
+                            <button class="btn-remove" type="button" aria-label="Remove The Simpsons">
+                                <svg viewBox="0 0 20 20" aria-hidden="true">
+                                    <path
+                                        d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.6"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Coming up -->
+                <section
+                    class="status-section status-section--upcoming"
+                    aria-labelledby="heading-upcoming"
+                >
+                    <div class="section-head">
+                        <span
+                            class="section-indicator"
+                            aria-hidden="true"
+                        ></span>
+                        <h2 class="section-label" id="heading-upcoming">
+                            Coming up
+                        </h2>
+                        <span class="section-count" aria-hidden="true">3</span>
+                    </div>
+                    <ul class="section-body">
+                        <li class="show-row">
+                            <div class="show-info">
+                                <p class="show-name">The Simpsons</p>
+                                <p class="show-ep">
+                                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                                        <rect
+                                            x="3"
+                                            y="4"
+                                            width="14"
+                                            height="13"
+                                            rx="2"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.6"
+                                        />
+                                        <path
+                                            d="M3 8h14M6.5 2.5v3M13.5 2.5v3"
+                                            stroke="currentColor"
+                                            stroke-width="1.6"
+                                            stroke-linecap="round"
+                                        />
+                                    </svg>
+                                    <span
+                                        >S37E19 &ldquo;The Long Goodbye&rdquo;
+                                        &mdash;
+                                        <time datetime="2026-07-05"
+                                            >Jul 5, 2026</time
+                                        ></span
+                                    >
+                                </p>
+                            </div>
+                            <button class="btn-remove" type="button" aria-label="Remove The Simpsons">
+                                <svg viewBox="0 0 20 20" aria-hidden="true">
+                                    <path
+                                        d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.6"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </li>
+                        <li class="show-row">
+                            <div class="show-info">
+                                <p class="show-name">Bob&rsquo;s Burgers</p>
+                                <p class="show-ep">
+                                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                                        <rect
+                                            x="3"
+                                            y="4"
+                                            width="14"
+                                            height="13"
+                                            rx="2"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.6"
+                                        />
+                                        <path
+                                            d="M3 8h14M6.5 2.5v3M13.5 2.5v3"
+                                            stroke="currentColor"
+                                            stroke-width="1.6"
+                                            stroke-linecap="round"
+                                        />
+                                    </svg>
+                                    <span
+                                        >S16E20 &ldquo;Glued Together&rdquo;
+                                        &mdash;
+                                        <time datetime="2026-07-12"
+                                            >Jul 12, 2026</time
+                                        ></span
+                                    >
+                                </p>
+                            </div>
+                            <button class="btn-remove" type="button" aria-label="Remove Bob's Burgers">
+                                <svg viewBox="0 0 20 20" aria-hidden="true">
+                                    <path
+                                        d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.6"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </li>
+                        <li class="show-row">
+                            <div class="show-info">
+                                <p class="show-name">American Dad!</p>
+                                <p class="show-ep">
+                                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                                        <rect
+                                            x="3"
+                                            y="4"
+                                            width="14"
+                                            height="13"
+                                            rx="2"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.6"
+                                        />
+                                        <path
+                                            d="M3 8h14M6.5 2.5v3M13.5 2.5v3"
+                                            stroke="currentColor"
+                                            stroke-width="1.6"
+                                            stroke-linecap="round"
+                                        />
+                                    </svg>
+                                    <span
+                                        >S21E04 &ldquo;Francine
+                                        Unfiltered&rdquo; &mdash;
+                                        <time datetime="2026-07-19"
+                                            >Jul 19, 2026</time
+                                        ></span
+                                    >
+                                </p>
+                            </div>
+                            <button class="btn-remove" type="button" aria-label="Remove American Dad!">
+                                <svg viewBox="0 0 20 20" aria-hidden="true">
+                                    <path
+                                        d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.6"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- On hiatus -->
+                <section
+                    class="status-section status-section--hiatus"
+                    aria-labelledby="heading-hiatus"
+                >
+                    <div class="section-head">
+                        <span
+                            class="section-indicator"
+                            aria-hidden="true"
+                        ></span>
+                        <h2 class="section-label" id="heading-hiatus">
+                            On hiatus
+                        </h2>
+                        <span class="section-count" aria-hidden="true">2</span>
+                    </div>
+                    <ul class="section-body">
+                        <li class="show-row">
+                            <div class="show-info">
+                                <p class="show-name">Family Guy</p>
+                                <p class="show-ep show-ep--muted">
+                                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                                        <rect
+                                            x="5"
+                                            y="3"
+                                            width="3.2"
+                                            height="14"
+                                            rx="1"
+                                            fill="currentColor"
+                                        />
+                                        <rect
+                                            x="11.8"
+                                            y="3"
+                                            width="3.2"
+                                            height="14"
+                                            rx="1"
+                                            fill="currentColor"
+                                        />
+                                    </svg>
+                                    <span
+                                        >Last aired
+                                        <time datetime="2026-06-14"
+                                            >Jun 14, 2026</time
+                                        >
+                                        &mdash; returns fall 2026</span
+                                    >
+                                </p>
+                            </div>
+                            <button class="btn-remove" type="button" aria-label="Remove Family Guy">
+                                <svg viewBox="0 0 20 20" aria-hidden="true">
+                                    <path
+                                        d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.6"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </li>
+                        <li class="show-row">
+                            <div class="show-info">
+                                <p class="show-name">South Park</p>
+                                <p class="show-ep show-ep--muted">
+                                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                                        <rect
+                                            x="5"
+                                            y="3"
+                                            width="3.2"
+                                            height="14"
+                                            rx="1"
+                                            fill="currentColor"
+                                        />
+                                        <rect
+                                            x="11.8"
+                                            y="3"
+                                            width="3.2"
+                                            height="14"
+                                            rx="1"
+                                            fill="currentColor"
+                                        />
+                                    </svg>
+                                    <span
+                                        >Last aired
+                                        <time datetime="2026-05-28"
+                                            >May 28, 2026</time
+                                        >
+                                        &mdash; next date TBA</span
+                                    >
+                                </p>
+                            </div>
+                            <button class="btn-remove" type="button" aria-label="Remove South Park">
+                                <svg viewBox="0 0 20 20" aria-hidden="true">
+                                    <path
+                                        d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.6"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- No upcoming episode -->
+                <section
+                    class="status-section status-section--ended"
+                    aria-labelledby="heading-ended"
+                >
+                    <div class="section-head">
+                        <span
+                            class="section-indicator"
+                            aria-hidden="true"
+                        ></span>
+                        <h2 class="section-label" id="heading-ended">
+                            No upcoming episode
+                        </h2>
+                        <span class="section-count" aria-hidden="true">1</span>
+                    </div>
+                    <ul class="section-body">
+                        <li class="show-row">
+                            <div class="show-info">
+                                <p class="show-name">Robot Chicken</p>
+                                <p class="show-ep show-ep--muted">
+                                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                                        <path
+                                            d="M5 2v16M5 3h9l-2.5 3L14 9H5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.6"
+                                            stroke-linejoin="round"
+                                        />
+                                    </svg>
+                                    <span
+                                        >Last aired
+                                        <time datetime="2026-04-18"
+                                            >Apr 18, 2026</time
+                                        >
+                                        &mdash; not yet renewed</span
+                                    >
+                                </p>
+                            </div>
+                            <button class="btn-remove" type="button" aria-label="Remove Robot Chicken">
+                                <svg viewBox="0 0 20 20" aria-hidden="true">
+                                    <path
+                                        d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.6"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </li>
+                    </ul>
+                </section>
+            </main>
+
+            <!-- ── Footer ─────────────────────────────────────────── -->
+            <footer class="app-footer">
+                <span>Updated 2:14 PM</span>
+                <button class="btn btn-ghost" type="button" id="btn-refresh">
+                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                        <path
+                            d="M16 10a6 6 0 11-1.8-4.3M16 3v4h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+                    Refresh
+                </button>
+            </footer>
+        </div>
+
         <script type="module" src="/src/popup/main.ts"></script>
     </body>
 </html>
