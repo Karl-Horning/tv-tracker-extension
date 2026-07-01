@@ -13,7 +13,7 @@ A Chrome extension for tracking TV shows. See when each show last aired and when
 
 - **Language**: TypeScript
 - **Build**: Vite
-- **Testing**: Vitest
+- **Testing**: Vitest, axe-core (automated accessibility)
 - **Data**: [TVmaze public API](https://www.tvmaze.com/api)
 
 ## Installation
