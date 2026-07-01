@@ -6,8 +6,8 @@
  */
 
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { fetchShow } from "./tvmaze";
-import type { TvmazeShow } from "./tvmaze";
+import { fetchShow, searchShows } from "./tvmaze";
+import type { TvmazeSearchResult, TvmazeShow } from "./tvmaze";
 
 const FIXTURE_SHOW: TvmazeShow = {
   id: 83,
@@ -115,5 +115,66 @@ describe("fetchShow", () => {
   it("propagates network failures unchanged", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("Network failure")));
     await expect(fetchShow(83)).rejects.toThrow("Network failure");
+  });
+});
+
+describe("searchShows", () => {
+  const FIXTURE_RESULTS: TvmazeSearchResult[] = [
+    {
+      score: 0.9129073,
+      show: { id: 83, name: "The Simpsons", status: "Running", network: { name: "FOX" } },
+    },
+    {
+      score: 0.6254818,
+      show: { id: 9999, name: "The Simpsons: Shorts", status: "Ended", network: null },
+    },
+  ];
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("returns an array of results on success", async () => {
+    stubFetch(FIXTURE_RESULTS);
+    const results = await searchShows("the simpsons");
+    expect(results).toHaveLength(2);
+    expect(results[0].show.id).toBe(83);
+    expect(results[0].show.name).toBe("The Simpsons");
+    expect(results[0].show.network?.name).toBe("FOX");
+    expect(results[1].show.network).toBeNull();
+  });
+
+  it("encodes the query in the request URL", async () => {
+    const mock = stubFetch(FIXTURE_RESULTS);
+    await searchShows("the simpsons");
+    expect(mock).toHaveBeenCalledWith(
+      "https://api.tvmaze.com/search/shows?q=the%20simpsons",
+    );
+  });
+
+  it("encodes special characters in the query", async () => {
+    const mock = stubFetch([]);
+    await searchShows("bob's burgers");
+    expect(mock).toHaveBeenCalledWith(
+      "https://api.tvmaze.com/search/shows?q=bob's%20burgers",
+    );
+  });
+
+  it("returns an empty array when no shows match", async () => {
+    stubFetch([]);
+    const results = await searchShows("xyzzy");
+    expect(results).toEqual([]);
+  });
+
+  it("throws with status and query when the API returns an error", async () => {
+    stubFetch({ message: "Server error" }, 500);
+    await expect(searchShows("the simpsons")).rejects.toThrow(
+      'TVmaze search error 500 for "the simpsons"',
+    );
+  });
+
+  it("propagates network failures unchanged", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("Network failure")));
+    await expect(searchShows("the simpsons")).rejects.toThrow("Network failure");
   });
 });
