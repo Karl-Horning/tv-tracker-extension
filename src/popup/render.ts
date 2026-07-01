@@ -249,12 +249,12 @@ function buildEpisodeText(show: TvmazeShow, group: ShowGroup): string {
 
         case "hiatus":
             return prev
-                ? `Last aired ${formatDate(prev.airdate)}${show.status === "To Be Determined" ? " — renewal pending" : ""}`
+                ? `S${prev.season}E${prev.number} “${prev.name}” — last aired ${formatDate(prev.airdate)}${show.status === "To Be Determined" ? " — renewal pending" : ""}`
                 : "No episodes aired";
 
         case "ended":
             return prev
-                ? `Last aired ${formatDate(prev.airdate)} — series ended`
+                ? `S${prev.season}E${prev.number} “${prev.name}” — last aired ${formatDate(prev.airdate)} — series ended`
                 : "No episodes aired";
     }
 }
