@@ -107,7 +107,7 @@ export function renderStatusBoard(
  * list is empty.
  *
  * @param container - The element to render results into.
- * @param results - The search results returned by searchShows.
+ * @param results - TVmaze search results to render.
  */
 export function renderSearchResults(
     container: HTMLElement,
@@ -155,7 +155,7 @@ export function renderSearchResults(
  * @param group - The show group this section represents.
  * @param label - The visible section heading text.
  * @param shows - The shows to render as rows inside this section.
- * @returns A section element ready to be appended to the board.
+ * @returns The constructed section element.
  */
 function buildSection(
     group: ShowGroup,
@@ -260,13 +260,13 @@ function buildEpisodeText(show: TvmazeShow, group: ShowGroup): string {
 }
 
 /**
- * Formats a YYYY-MM-DD air date string as "Mon D, YYYY" in UTC.
+ * Formats a YYYY-MM-DD air date string as "D Mon YYYY" in UTC.
  *
  * Parsing in UTC prevents the date from shifting due to the user's local
  * timezone offset.
  *
  * @param airdate - An ISO date string in YYYY-MM-DD format.
- * @returns A human-readable date string such as "Jun 28, 2026".
+ * @returns A human-readable date string, for example "28 Jun 2026".
  */
 function formatDate(airdate: string): string {
     const parts = airdate.split("-");

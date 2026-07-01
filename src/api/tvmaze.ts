@@ -2,8 +2,7 @@
  * @fileoverview TVmaze API client for fetching and searching show data.
  *
  * Wraps the TVmaze public REST API. All functions return plain data objects
- * and throw on non-2xx responses or network failures — callers decide how
- * to handle errors.
+ * and throw on non-2xx responses or network failures.
  */
 
 /** Base URL for all TVmaze API requests. */

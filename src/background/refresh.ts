@@ -1,9 +1,8 @@
 /**
  * @fileoverview Background refresh logic for the TV Tracker extension.
  *
- * Exports pure functions that fetch fresh show data from TVmaze and write it
- * to the storage cache. Event listener wiring lives in worker.ts so this
- * module can be imported in tests without triggering side effects.
+ * Exports functions for fetching fresh show data from TVmaze and updating
+ * the storage cache. No side effects at module load time.
  */
 
 import { fetchShow } from "../api/tvmaze";

@@ -3,8 +3,7 @@
  *
  * Two keys are maintained in storage:
  *   - `trackedIds`  — ordered list of show IDs the user has added
- *   - `showCache`   — map of show ID → TvmazeShow, populated on add and
- *                     refreshed by the background alarm (step 8)
+ *   - `showCache`   — map of show ID → TvmazeShow with cached episode data
  */
 
 import type { TvmazeShow } from "../api/tvmaze";
@@ -28,10 +27,9 @@ export async function getTrackedIds(): Promise<number[]> {
 /**
  * Returns cached show data for all tracked shows, in insertion order.
  *
- * Shows whose cached data is missing (for example, not yet fetched) are omitted
- * from the result rather than included as undefined.
+ * Shows not present in the cache are omitted from the result.
  *
- * @returns Array of TvmazeShow objects in the order the user added them.
+ * @returns Array of TvmazeShow objects.
  */
 export async function getCachedShows(): Promise<TvmazeShow[]> {
     const result = await chrome.storage.local.get([KEY_IDS, KEY_CACHE]);
@@ -91,7 +89,7 @@ export async function removeShow(id: number): Promise<void> {
 /**
  * Replaces a show's cached data without touching the tracked IDs list.
  *
- * @param show - Fresh TvmazeShow data to write into the cache.
+ * @param show - Updated TvmazeShow data to store in the cache.
  */
 export async function updateCachedShow(show: TvmazeShow): Promise<void> {
     const result = await chrome.storage.local.get(KEY_CACHE);
