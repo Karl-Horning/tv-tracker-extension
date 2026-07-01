@@ -6,4 +6,4 @@
  * interactions once those steps are complete.
  */
 
-import './style.css';
+import "./style.css";
