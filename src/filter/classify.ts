@@ -60,7 +60,7 @@ export function classifyShow(
  * Formats a Date as "YYYY-MM-DD" in UTC for consistent airdate comparisons.
  *
  * @param date - The date to format.
- * @returns ISO date string, e.g. "2026-07-01".
+ * @returns ISO date string, for example "2026-07-01".
  */
 function toDateString(date: Date): string {
     return date.toISOString().slice(0, 10);

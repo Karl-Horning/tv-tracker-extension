@@ -1,0 +1,103 @@
+/**
+ * @fileoverview Persistence layer for tracked shows using chrome.storage.local.
+ *
+ * Two keys are maintained in storage:
+ *   - `trackedIds`  — ordered list of show IDs the user has added
+ *   - `showCache`   — map of show ID → TvmazeShow, populated on add and
+ *                     refreshed by the background alarm (step 8)
+ */
+
+import type { TvmazeShow } from "../api/tvmaze";
+
+/** Storage key for the ordered list of tracked show IDs. */
+const KEY_IDS = "trackedIds";
+
+/** Storage key for the cached TVmaze show data, keyed by string show ID. */
+const KEY_CACHE = "showCache";
+
+/**
+ * Returns the ordered list of tracked show IDs.
+ *
+ * @returns Show IDs in insertion order, or an empty array if none are tracked.
+ */
+export async function getTrackedIds(): Promise<number[]> {
+    const result = await chrome.storage.local.get(KEY_IDS);
+    return (result[KEY_IDS] as number[] | undefined) ?? [];
+}
+
+/**
+ * Returns cached show data for all tracked shows, in insertion order.
+ *
+ * Shows whose cached data is missing (for example, not yet fetched) are omitted
+ * from the result rather than included as undefined.
+ *
+ * @returns Array of TvmazeShow objects in the order the user added them.
+ */
+export async function getCachedShows(): Promise<TvmazeShow[]> {
+    const result = await chrome.storage.local.get([KEY_IDS, KEY_CACHE]);
+    const ids = (result[KEY_IDS] as number[] | undefined) ?? [];
+    const cache =
+        (result[KEY_CACHE] as Record<string, TvmazeShow> | undefined) ?? {};
+    return ids.flatMap((id) => {
+        const show = cache[String(id)];
+        return show ? [show] : [];
+    });
+}
+
+/**
+ * Adds a show to the tracked list and stores its data in the cache.
+ *
+ * If the show is already tracked this is a no-op — the existing entry and
+ * its cached data are left unchanged.
+ *
+ * @param show - The TvmazeShow to track (must include embedded episode data).
+ */
+export async function addShow(show: TvmazeShow): Promise<void> {
+    const result = await chrome.storage.local.get([KEY_IDS, KEY_CACHE]);
+    const ids = (result[KEY_IDS] as number[] | undefined) ?? [];
+    const cache =
+        (result[KEY_CACHE] as Record<string, TvmazeShow> | undefined) ?? {};
+
+    if (ids.includes(show.id)) return;
+
+    await chrome.storage.local.set({
+        [KEY_IDS]: [...ids, show.id],
+        [KEY_CACHE]: { ...cache, [String(show.id)]: show },
+    });
+}
+
+/**
+ * Removes a show from the tracked list and its data from the cache.
+ *
+ * If the show is not currently tracked this is a no-op.
+ *
+ * @param id - The TVmaze show ID to remove.
+ */
+export async function removeShow(id: number): Promise<void> {
+    const result = await chrome.storage.local.get([KEY_IDS, KEY_CACHE]);
+    const ids = (result[KEY_IDS] as number[] | undefined) ?? [];
+    const cache =
+        (result[KEY_CACHE] as Record<string, TvmazeShow> | undefined) ?? {};
+
+    const newCache = { ...cache };
+    delete newCache[String(id)];
+
+    await chrome.storage.local.set({
+        [KEY_IDS]: ids.filter((i) => i !== id),
+        [KEY_CACHE]: newCache,
+    });
+}
+
+/**
+ * Replaces a show's cached data without touching the tracked IDs list.
+ *
+ * @param show - Fresh TvmazeShow data to write into the cache.
+ */
+export async function updateCachedShow(show: TvmazeShow): Promise<void> {
+    const result = await chrome.storage.local.get(KEY_CACHE);
+    const cache =
+        (result[KEY_CACHE] as Record<string, TvmazeShow> | undefined) ?? {};
+    await chrome.storage.local.set({
+        [KEY_CACHE]: { ...cache, [String(show.id)]: show },
+    });
+}
