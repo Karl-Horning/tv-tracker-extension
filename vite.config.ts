@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 import { resolve } from "node:path";
 
 export default defineConfig({
@@ -9,5 +9,8 @@ export default defineConfig({
                 popup: resolve(import.meta.dirname, "popup.html"),
             },
         },
+    },
+    test: {
+        environment: "node",
     },
 });
