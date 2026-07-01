@@ -1,0 +1,323 @@
+/**
+ * Styles for the TV Tracker popup.
+ *
+ * Implements the Status Board design: shows grouped into sections by
+ * status (Aired recently, Coming up, On hiatus, No upcoming episode).
+ * Typography and spacing follow Google's HTML/CSS Style Guide and are
+ * optimised for dyslexia-friendly readability throughout.
+ */
+
+/* === Custom properties ============================================ */
+
+:root {
+    --bg: #eff3f1;
+    --panel: #ffffff;
+    --ink: #26303a;
+    --muted: #5b6560;
+    --line: #dde3e0;
+
+    --green: #2e7d5b;
+    --green-bg: #e3f0e9;
+    --amber: #b6791f;
+    --amber-bg: #f6ebd8;
+    --slate: #4a5568;
+    --slate-bg: #eaeaea;
+    --rose: #a4453b;
+    --rose-bg: #f4e4e1;
+}
+
+/* === Reset / base ================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 380px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Atkinson Hyperlegible", Verdana, Tahoma, sans-serif;
+    font-size: 1rem;
+    line-height: 1.55;
+    letter-spacing: 0.015em;
+    -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+    outline: 3px solid var(--green);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* === App layout =================================================== */
+
+#app {
+    display: flex;
+    flex-direction: column;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+/* === Header ======================================================= */
+
+.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+}
+
+.app-title {
+    font-family: "Barlow Semi Condensed", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-size: 1.3125rem;
+    letter-spacing: 0.01em;
+}
+
+/* === Buttons ====================================================== */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.btn-primary {
+    background: var(--green);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #256649;
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--green);
+    font-size: 0.8125rem;
+    min-height: 36px;
+    padding: 6px 8px;
+}
+
+.btn-ghost:hover {
+    background: var(--green-bg);
+}
+
+.btn-ghost svg {
+    width: 14px;
+    height: 14px;
+}
+
+.btn-remove {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1.5px solid var(--line);
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+}
+
+.btn-remove:hover {
+    border-color: var(--rose);
+    color: var(--rose);
+}
+
+.btn-remove svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* === Status sections ============================================== */
+
+.show-sections {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.status-section {
+    margin: 14px 14px 0;
+}
+
+.status-section:last-child {
+    margin-bottom: 14px;
+}
+
+.section-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 7px 7px 0 0;
+}
+
+.section-indicator {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.section-label {
+    font-family: "Barlow Semi Condensed", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    letter-spacing: 0.02em;
+    flex: 1;
+}
+
+.section-count {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.status-section--fresh .section-head {
+    background: var(--green-bg);
+    color: var(--green);
+}
+
+.status-section--fresh .section-indicator {
+    background: var(--green);
+}
+
+.status-section--upcoming .section-head {
+    background: var(--amber-bg);
+    color: var(--amber);
+}
+
+.status-section--upcoming .section-indicator {
+    background: var(--amber);
+}
+
+.status-section--hiatus .section-head {
+    background: var(--slate-bg);
+    color: var(--slate);
+}
+
+.status-section--hiatus .section-indicator {
+    background: #9b958a;
+}
+
+.status-section--ended .section-head {
+    background: var(--rose-bg);
+    color: var(--rose);
+}
+
+.status-section--ended .section-indicator {
+    background: var(--rose);
+}
+
+/* === Section body (show rows) ===================================== */
+
+.section-body {
+    list-style: none;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-top: none;
+    border-radius: 0 0 7px 7px;
+}
+
+.show-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border-bottom: 1px solid var(--line);
+}
+
+.show-row:last-child {
+    border-bottom: none;
+}
+
+.show-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.show-name {
+    font-weight: 700;
+    font-size: 0.9375rem;
+    margin-bottom: 4px;
+}
+
+.show-ep {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: var(--ink);
+    line-height: 1.5;
+}
+
+.show-ep svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--muted);
+}
+
+.show-ep--muted {
+    color: var(--muted);
+}
+
+/* === Footer ======================================================= */
+
+.app-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+}
+
+/* === Utility ====================================================== */
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
