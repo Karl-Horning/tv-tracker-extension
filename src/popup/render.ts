@@ -90,7 +90,7 @@ export function renderStatusBoard(
         }
     }
 
-    container.innerHTML = "";
+    container.querySelectorAll(".status-section").forEach((s) => s.remove());
 
     for (const { group, label } of SECTION_DEFS) {
         const groupShows = groups[group];

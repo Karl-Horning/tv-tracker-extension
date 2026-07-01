@@ -40,7 +40,7 @@ async function loadAndRender(): Promise<void> {
     const hasShows = shows.length > 0;
 
     renderStatusBoard($sections, shows);
-    $sections.hidden = !hasShows;
+    $sections.hidden = false;
     $emptyState.hidden = hasShows;
     $lastUpdated.textContent = `Updated ${new Date().toLocaleTimeString("en-US", {
         hour: "numeric",
@@ -62,7 +62,6 @@ async function loadAndRender(): Promise<void> {
 function openSearch(): void {
     $searchPanel.hidden = false;
     $sections.hidden = true;
-    $emptyState.hidden = true;
     $searchInput.value = "";
     $searchResults.innerHTML = "";
     $searchInput.focus();
