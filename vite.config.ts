@@ -7,6 +7,13 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 popup: resolve(import.meta.dirname, "popup.html"),
+                background: resolve(
+                    import.meta.dirname,
+                    "src/background/worker.ts",
+                ),
+            },
+            output: {
+                entryFileNames: "[name].js",
             },
         },
     },
