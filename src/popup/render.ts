@@ -239,24 +239,36 @@ function buildEpisodeText(show: TvmazeShow, group: ShowGroup): string {
     switch (group) {
         case "fresh":
             return prev
-                ? `S${prev.season}E${prev.number} “${prev.name}” — ${formatDate(prev.airdate)}`
+                ? `${formatEpisodeCode(prev.season, prev.number)} “${prev.name}” — ${formatDate(prev.airdate)}`
                 : "Recently aired";
 
         case "upcoming":
             return next
-                ? `S${next.season}E${next.number} “${next.name}” — ${formatDate(next.airdate)}`
+                ? `${formatEpisodeCode(next.season, next.number)} “${next.name}” — ${formatDate(next.airdate)}`
                 : "Coming soon";
 
         case "hiatus":
             return prev
-                ? `S${prev.season}E${prev.number} “${prev.name}” — last aired ${formatDate(prev.airdate)}${show.status === "To Be Determined" ? " — renewal pending" : ""}`
+                ? `${formatEpisodeCode(prev.season, prev.number)} “${prev.name}” — last aired ${formatDate(prev.airdate)}${show.status === "To Be Determined" ? " — renewal pending" : ""}`
                 : "No episodes aired";
 
         case "ended":
             return prev
-                ? `S${prev.season}E${prev.number} “${prev.name}” — last aired ${formatDate(prev.airdate)} — series ended`
+                ? `${formatEpisodeCode(prev.season, prev.number)} “${prev.name}” — last aired ${formatDate(prev.airdate)} — series ended`
                 : "No episodes aired";
     }
+}
+
+/**
+ * Formats a season and episode number as a zero-padded "SxxExx" code.
+ *
+ * @param season - The season number.
+ * @param number - The episode number within the season.
+ * @returns A code string, for example "S02E09".
+ */
+function formatEpisodeCode(season: number, number: number): string {
+    const pad = (value: number): string => String(value).padStart(2, "0");
+    return `S${pad(season)}E${pad(number)}`;
 }
 
 /**
