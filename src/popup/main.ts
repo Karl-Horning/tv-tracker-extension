@@ -49,6 +49,9 @@ async function loadAndRender(): Promise<void> {
 
     $sections.querySelectorAll<HTMLButtonElement>(".btn-remove").forEach((btn) => {
         btn.addEventListener("click", async () => {
+            const showName = btn.dataset.showName ?? "this show";
+            if (!window.confirm(`Remove ${showName} from your tracked shows?`)) return;
+
             const id = Number(btn.dataset.showId);
             await removeShow(id);
             await loadAndRender();
