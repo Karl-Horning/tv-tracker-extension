@@ -6,7 +6,7 @@
  */
 
 import { fetchShow } from "../api/tvmaze";
-import { getTrackedIds, updateCachedShow } from "../storage/shows";
+import { getTrackedIds, updateCachedShows } from "../storage/shows";
 
 /** Name of the periodic refresh alarm registered with chrome.alarms. */
 export const ALARM_NAME = "refresh";
@@ -40,15 +40,16 @@ export async function handleAlarm(alarm: chrome.alarms.Alarm): Promise<void> {
 /**
  * Fetches fresh data for every tracked show and writes it to the cache.
  *
- * Uses Promise.allSettled so a failure on one show does not prevent the
- * remaining shows from being refreshed.
+ * Fetches happen in parallel, but the successfully fetched shows are written
+ * to storage in a single batch — writing one at a time from concurrent code
+ * would race, with later writes silently clobbering earlier ones. A failure
+ * fetching one show does not prevent the rest from being refreshed.
  */
 export async function refreshAllShows(): Promise<void> {
     const ids = await getTrackedIds();
-    await Promise.allSettled(
-        ids.map(async (id) => {
-            const show = await fetchShow(id);
-            await updateCachedShow(show);
-        }),
+    const results = await Promise.allSettled(ids.map((id) => fetchShow(id)));
+    const shows = results.flatMap((r) =>
+        r.status === "fulfilled" ? [r.value] : [],
     );
+    if (shows.length > 0) await updateCachedShows(shows);
 }

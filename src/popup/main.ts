@@ -2,10 +2,11 @@
  * @fileoverview Popup controller for the TV Tracker extension.
  *
  * Orchestrates data loading from chrome.storage.local, DOM rendering,
- * and user interactions (add show, remove show, refresh).
+ * and user interactions (add show, remove show, refresh, import/export).
  */
 
 import "./style.css";
+import { buildBackup, importBackup, parseBackup } from "../backup/backup";
 import { fetchShow, searchShows } from "../api/tvmaze";
 import { refreshAllShows } from "../background/refresh";
 import type { SortOrder } from "../filter/classify";
@@ -39,6 +40,11 @@ const $searchResults = document.getElementById(
 const $btnCancel = document.getElementById(
     "btn-search-cancel",
 ) as HTMLButtonElement;
+const $btnExport = document.getElementById("btn-export") as HTMLButtonElement;
+const $btnImport = document.getElementById("btn-import") as HTMLButtonElement;
+const $importFile = document.getElementById(
+    "import-file",
+) as HTMLInputElement;
 
 // ── State ─────────────────────────────────────────────────────────────
 
@@ -141,6 +147,46 @@ $sortSelect.addEventListener("change", async () => {
     currentSort = $sortSelect.value as SortOrder;
     await setSortOrder(currentSort);
     await loadAndRender();
+});
+
+// ── Import / export ──────────────────────────────────────────────────
+
+$btnExport.addEventListener("click", async () => {
+    const backup = await buildBackup();
+    const blob = new Blob([JSON.stringify(backup, null, 2)], {
+        type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `tv-tracker-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+});
+
+$btnImport.addEventListener("click", () => $importFile.click());
+
+$importFile.addEventListener("change", async () => {
+    const file = $importFile.files?.[0];
+    $importFile.value = "";
+    if (!file) return;
+
+    try {
+        const backup = parseBackup(await file.text());
+        const result = await importBackup(backup);
+        await loadAndRender();
+        window.alert(
+            `Imported ${result.imported} show${result.imported === 1 ? "" : "s"}.` +
+                (result.failed > 0
+                    ? ` ${result.failed} could not be imported.`
+                    : ""),
+        );
+    } catch (err) {
+        console.error("Failed to import backup:", err);
+        window.alert(
+            err instanceof Error ? err.message : "Failed to import backup.",
+        );
+    }
 });
 
 // ── Refresh ───────────────────────────────────────────────────────────

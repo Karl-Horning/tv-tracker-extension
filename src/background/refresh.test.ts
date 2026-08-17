@@ -1,7 +1,7 @@
 /**
  * @fileoverview Unit tests for the background refresh logic.
  *
- * Module dependencies (fetchShow, getTrackedIds, updateCachedShow) are
+ * Module dependencies (fetchShow, getTrackedIds, updateCachedShows) are
  * replaced with vi.mock so no real network or storage calls are made.
  * chrome.alarms is stubbed per-describe for the registerAlarm tests only.
  */
@@ -9,7 +9,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { TvmazeShow } from "../api/tvmaze";
 import { fetchShow } from "../api/tvmaze";
-import { getTrackedIds, updateCachedShow } from "../storage/shows";
+import { getTrackedIds, updateCachedShows } from "../storage/shows";
 import {
     ALARM_NAME,
     ALARM_PERIOD_MINUTES,
@@ -21,7 +21,7 @@ import {
 vi.mock("../api/tvmaze", () => ({ fetchShow: vi.fn() }));
 vi.mock("../storage/shows", () => ({
     getTrackedIds: vi.fn(),
-    updateCachedShow: vi.fn(),
+    updateCachedShows: vi.fn(),
 }));
 
 const FIXTURE_SHOW: TvmazeShow = {
@@ -62,7 +62,7 @@ describe("handleAlarm", () => {
     beforeEach(() => {
         vi.mocked(getTrackedIds).mockResolvedValue([83]);
         vi.mocked(fetchShow).mockResolvedValue(FIXTURE_SHOW);
-        vi.mocked(updateCachedShow).mockResolvedValue(undefined);
+        vi.mocked(updateCachedShows).mockResolvedValue(undefined);
     });
 
     afterEach(() => vi.clearAllMocks());
@@ -75,7 +75,7 @@ describe("handleAlarm", () => {
     it("refreshes all shows when the alarm name matches", async () => {
         await handleAlarm({ name: ALARM_NAME, scheduledTime: 0 });
         expect(getTrackedIds).toHaveBeenCalled();
-        expect(updateCachedShow).toHaveBeenCalledWith(FIXTURE_SHOW);
+        expect(updateCachedShows).toHaveBeenCalledWith([FIXTURE_SHOW]);
     });
 });
 
@@ -85,7 +85,7 @@ describe("refreshAllShows", () => {
     it("fetches every tracked show", async () => {
         vi.mocked(getTrackedIds).mockResolvedValue([83, 84]);
         vi.mocked(fetchShow).mockResolvedValue(FIXTURE_SHOW);
-        vi.mocked(updateCachedShow).mockResolvedValue(undefined);
+        vi.mocked(updateCachedShows).mockResolvedValue(undefined);
 
         await refreshAllShows();
 
@@ -93,14 +93,15 @@ describe("refreshAllShows", () => {
         expect(fetchShow).toHaveBeenCalledWith(84);
     });
 
-    it("updates the cache for each show", async () => {
+    it("writes fetched shows to the cache in a single batch", async () => {
         vi.mocked(getTrackedIds).mockResolvedValue([83]);
         vi.mocked(fetchShow).mockResolvedValue(FIXTURE_SHOW);
-        vi.mocked(updateCachedShow).mockResolvedValue(undefined);
+        vi.mocked(updateCachedShows).mockResolvedValue(undefined);
 
         await refreshAllShows();
 
-        expect(updateCachedShow).toHaveBeenCalledWith(FIXTURE_SHOW);
+        expect(updateCachedShows).toHaveBeenCalledTimes(1);
+        expect(updateCachedShows).toHaveBeenCalledWith([FIXTURE_SHOW]);
     });
 
     it("does nothing when no shows are tracked", async () => {
@@ -109,7 +110,7 @@ describe("refreshAllShows", () => {
         await refreshAllShows();
 
         expect(fetchShow).not.toHaveBeenCalled();
-        expect(updateCachedShow).not.toHaveBeenCalled();
+        expect(updateCachedShows).not.toHaveBeenCalled();
     });
 
     it("continues refreshing other shows when one fetch fails", async () => {
@@ -117,10 +118,10 @@ describe("refreshAllShows", () => {
         vi.mocked(fetchShow)
             .mockRejectedValueOnce(new Error("Network failure"))
             .mockResolvedValueOnce(FIXTURE_SHOW);
-        vi.mocked(updateCachedShow).mockResolvedValue(undefined);
+        vi.mocked(updateCachedShows).mockResolvedValue(undefined);
 
         await expect(refreshAllShows()).resolves.toBeUndefined();
-        expect(updateCachedShow).toHaveBeenCalledTimes(1);
-        expect(updateCachedShow).toHaveBeenCalledWith(FIXTURE_SHOW);
+        expect(updateCachedShows).toHaveBeenCalledTimes(1);
+        expect(updateCachedShows).toHaveBeenCalledWith([FIXTURE_SHOW]);
     });
 });

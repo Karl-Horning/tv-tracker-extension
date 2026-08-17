@@ -89,19 +89,77 @@
             <!-- ── Footer ─────────────────────────────────────────── -->
             <footer class="app-footer">
                 <span id="last-updated"></span>
-                <button class="btn btn-ghost" type="button" id="btn-refresh">
-                    <svg viewBox="0 0 20 20" aria-hidden="true">
-                        <path
-                            d="M16 10a6 6 0 11-1.8-4.3M16 3v4h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        />
-                    </svg>
-                    Refresh
-                </button>
+                <div class="footer-actions">
+                    <button
+                        class="btn-icon"
+                        type="button"
+                        id="btn-export"
+                        aria-label="Export tracked shows as a JSON file"
+                    >
+                        <svg viewBox="0 0 20 20" aria-hidden="true">
+                            <path
+                                d="M10 3v9m0 0l-3.5-3.5M10 12l3.5-3.5"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                            <path
+                                d="M4 14v2a1 1 0 001 1h10a1 1 0 001-1v-2"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </button>
+                    <button
+                        class="btn-icon"
+                        type="button"
+                        id="btn-import"
+                        aria-label="Import tracked shows from a JSON file"
+                    >
+                        <svg viewBox="0 0 20 20" aria-hidden="true">
+                            <path
+                                d="M10 12V3m0 0l-3.5 3.5M10 3l3.5 3.5"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                            <path
+                                d="M4 14v2a1 1 0 001 1h10a1 1 0 001-1v-2"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </button>
+                    <input
+                        type="file"
+                        id="import-file"
+                        accept="application/json"
+                        hidden
+                    />
+                    <button class="btn btn-ghost" type="button" id="btn-refresh">
+                        <svg viewBox="0 0 20 20" aria-hidden="true">
+                            <path
+                                d="M16 10a6 6 0 11-1.8-4.3M16 3v4h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
             </footer>
         </div>
 
