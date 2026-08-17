@@ -6,7 +6,7 @@
  */
 
 import type { TvmazeSearchResult, TvmazeShow } from "../api/tvmaze";
-import { classifyShow, type ShowGroup } from "../filter/classify";
+import { classifyShow, type ShowGroup, type SortOrder } from "../filter/classify";
 
 // ── SVG icon strings ─────────────────────────────────────────────────
 
@@ -71,11 +71,13 @@ const SECTION_DEFS: Array<{ group: ShowGroup; label: string }> = [
  * @param container - The element to render sections into.
  * @param shows - The list of tracked shows to classify and render.
  * @param now - Reference time for classification; defaults to the current time.
+ * @param sortOrder - How to order shows within each section; defaults to title (A–Z).
  */
 export function renderStatusBoard(
     container: HTMLElement,
     shows: TvmazeShow[],
     now: Date = new Date(),
+    sortOrder: SortOrder = "title-asc",
 ): void {
     const groups: Record<ShowGroup, TvmazeShow[]> = {
         fresh: [],
@@ -93,7 +95,7 @@ export function renderStatusBoard(
     container.querySelectorAll(".status-section").forEach((s) => s.remove());
 
     for (const { group, label } of SECTION_DEFS) {
-        const groupShows = groups[group];
+        const groupShows = sortShows(groups[group], group, sortOrder);
         if (groupShows.length === 0) continue;
         container.append(buildSection(group, label, groupShows));
     }
@@ -148,6 +150,43 @@ export function renderSearchResults(
 }
 
 // ── Internal helpers ──────────────────────────────────────────────────
+
+/**
+ * Returns shows sorted for display within a single section.
+ *
+ * Sorting by title compares show names alphabetically. Sorting by air date
+ * compares the episode date shown in that section — the previous episode's
+ * airdate for "fresh", "hiatus", and "ended", or the next episode's airdate
+ * for "upcoming". Shows missing that date always sort last, regardless of
+ * direction.
+ *
+ * @param shows - The shows belonging to this section.
+ * @param group - The section these shows belong to.
+ * @param order - The sort field and direction to apply.
+ * @returns A new array of shows in the requested order.
+ */
+function sortShows(
+    shows: TvmazeShow[],
+    group: ShowGroup,
+    order: SortOrder,
+): TvmazeShow[] {
+    const direction = order.endsWith("-desc") ? -1 : 1;
+
+    if (order.startsWith("title")) {
+        return [...shows].sort(
+            (a, b) => direction * a.name.localeCompare(b.name),
+        );
+    }
+
+    const episodeKey = group === "upcoming" ? "nextepisode" : "previousepisode";
+    return [...shows].sort((a, b) => {
+        const dateA = a._embedded[episodeKey]?.airdate ?? "";
+        const dateB = b._embedded[episodeKey]?.airdate ?? "";
+        if (!dateA) return 1;
+        if (!dateB) return -1;
+        return direction * dateA.localeCompare(dateB);
+    });
+}
 
 /**
  * Builds a single status section element for the given group.

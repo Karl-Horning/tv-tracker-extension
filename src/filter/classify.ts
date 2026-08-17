@@ -19,6 +19,13 @@ import type { TvmazeShow } from "../api/tvmaze";
  */
 export type ShowGroup = "fresh" | "upcoming" | "hiatus" | "ended";
 
+/** Sort order for shows within each status section. */
+export type SortOrder =
+    | "title-asc"
+    | "title-desc"
+    | "airdate-asc"
+    | "airdate-desc";
+
 /**
  * Returns the status groups a show belongs to.
  *

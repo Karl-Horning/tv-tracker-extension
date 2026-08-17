@@ -61,6 +61,17 @@
                 ></ul>
             </section>
 
+            <!-- ── Sort control ───────────────────────────────────── -->
+            <div class="sort-bar" id="sort-bar" hidden>
+                <label class="sort-label" for="sort-select">Sort by</label>
+                <select class="sort-select" id="sort-select">
+                    <option value="title-asc">Title (A–Z)</option>
+                    <option value="title-desc">Title (Z–A)</option>
+                    <option value="airdate-asc">Air date (soonest first)</option>
+                    <option value="airdate-desc">Air date (latest first)</option>
+                </select>
+            </div>
+
             <!-- ── Show sections (populated from storage) ─────────── -->
             <main
                 class="show-sections"

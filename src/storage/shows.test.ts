@@ -9,8 +9,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
     addShow,
     getCachedShows,
+    getSortOrder,
     getTrackedIds,
     removeShow,
+    setSortOrder,
     updateCachedShow,
 } from "./shows";
 import type { TvmazeShow } from "../api/tvmaze";
@@ -171,5 +173,30 @@ describe("updateCachedShow", () => {
         await addShow(SHOW_A);
         await updateCachedShow({ ...SHOW_A, status: "Ended" });
         expect(await getTrackedIds()).toEqual([83]);
+    });
+});
+
+describe("getSortOrder", () => {
+    beforeEach(stubChrome);
+    afterEach(() => vi.unstubAllGlobals());
+
+    it("returns 'title-asc' when no sort order has been stored", async () => {
+        expect(await getSortOrder()).toBe("title-asc");
+    });
+
+    it("returns the stored sort order", async () => {
+        await setSortOrder("airdate-asc");
+        expect(await getSortOrder()).toBe("airdate-asc");
+    });
+});
+
+describe("setSortOrder", () => {
+    beforeEach(stubChrome);
+    afterEach(() => vi.unstubAllGlobals());
+
+    it("persists the sort order across reads", async () => {
+        await setSortOrder("airdate-desc");
+        await setSortOrder("title-desc");
+        expect(await getSortOrder()).toBe("title-desc");
     });
 });
