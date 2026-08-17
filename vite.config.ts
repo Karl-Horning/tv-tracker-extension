@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Vite build and Vitest test configuration for the extension.
+ *
+ * Defines the popup and background service worker as separate build
+ * entry points, and configures Vitest to run tests in a Node environment.
+ */
+
 import { defineConfig } from "vitest/config";
 import { resolve } from "node:path";
 
