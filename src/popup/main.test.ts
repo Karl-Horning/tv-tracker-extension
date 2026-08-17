@@ -163,6 +163,13 @@ describe("renderStatusBoard", () => {
         expect(btn?.dataset.showId).toBe("49");
     });
 
+    it("sets data-show-name on the remove button to the show's name", () => {
+        const el = document.createElement("div");
+        renderStatusBoard(el, [SHOW_HIATUS], NOW);
+        const btn = el.querySelector<HTMLButtonElement>(".btn-remove");
+        expect(btn?.dataset.showName).toBe("South Park");
+    });
+
     it("renders the section count chip with the number of shows in that section", () => {
         const el = document.createElement("div");
         renderStatusBoard(el, [SHOW_FRESH_AND_UPCOMING, SHOW_UPCOMING_ONLY], NOW);

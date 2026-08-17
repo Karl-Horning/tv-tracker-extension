@@ -220,6 +220,7 @@ function buildShowRow(show: TvmazeShow, group: ShowGroup): HTMLLIElement {
     removeBtn.type = "button";
     removeBtn.setAttribute("aria-label", `Remove ${show.name}`);
     removeBtn.dataset.showId = String(show.id);
+    removeBtn.dataset.showName = show.name;
     removeBtn.innerHTML = SVG_TRASH;
 
     li.append(infoDiv, removeBtn);
