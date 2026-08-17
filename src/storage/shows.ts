@@ -56,16 +56,36 @@ export async function getCachedShows(): Promise<TvmazeShow[]> {
  * @param show - The TvmazeShow to track (must include embedded episode data).
  */
 export async function addShow(show: TvmazeShow): Promise<void> {
+    await addShows([show]);
+}
+
+/**
+ * Adds multiple shows to the tracked list in a single read-modify-write.
+ *
+ * Shows already tracked are left unchanged. Calling this once for a batch of
+ * shows — rather than calling addShow once per show from concurrent code —
+ * avoids the lost-update race where overlapping reads of the same stale
+ * tracked-list snapshot cause later writes to silently clobber earlier ones.
+ *
+ * @param shows - The TvmazeShows to track (must include embedded episode data).
+ */
+export async function addShows(shows: TvmazeShow[]): Promise<void> {
     const result = await chrome.storage.local.get([KEY_IDS, KEY_CACHE]);
     const ids = (result[KEY_IDS] as number[] | undefined) ?? [];
     const cache =
         (result[KEY_CACHE] as Record<string, TvmazeShow> | undefined) ?? {};
 
-    if (ids.includes(show.id)) return;
+    const newIds = [...ids];
+    const newCache = { ...cache };
+    for (const show of shows) {
+        if (newIds.includes(show.id)) continue;
+        newIds.push(show.id);
+        newCache[String(show.id)] = show;
+    }
 
     await chrome.storage.local.set({
-        [KEY_IDS]: [...ids, show.id],
-        [KEY_CACHE]: { ...cache, [String(show.id)]: show },
+        [KEY_IDS]: newIds,
+        [KEY_CACHE]: newCache,
     });
 }
 
@@ -97,12 +117,31 @@ export async function removeShow(id: number): Promise<void> {
  * @param show - Updated TvmazeShow data to store in the cache.
  */
 export async function updateCachedShow(show: TvmazeShow): Promise<void> {
+    await updateCachedShows([show]);
+}
+
+/**
+ * Replaces cached data for multiple shows in a single read-modify-write,
+ * without touching the tracked IDs list.
+ *
+ * Calling this once for a batch of shows — rather than calling
+ * updateCachedShow once per show from concurrent code — avoids the
+ * lost-update race where overlapping reads of the same stale cache snapshot
+ * cause later writes to silently clobber earlier ones.
+ *
+ * @param shows - Updated TvmazeShow data to store in the cache.
+ */
+export async function updateCachedShows(shows: TvmazeShow[]): Promise<void> {
     const result = await chrome.storage.local.get(KEY_CACHE);
     const cache =
         (result[KEY_CACHE] as Record<string, TvmazeShow> | undefined) ?? {};
-    await chrome.storage.local.set({
-        [KEY_CACHE]: { ...cache, [String(show.id)]: show },
-    });
+
+    const newCache = { ...cache };
+    for (const show of shows) {
+        newCache[String(show.id)] = show;
+    }
+
+    await chrome.storage.local.set({ [KEY_CACHE]: newCache });
 }
 
 /**

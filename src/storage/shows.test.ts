@@ -8,12 +8,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
     addShow,
+    addShows,
     getCachedShows,
     getSortOrder,
     getTrackedIds,
     removeShow,
     setSortOrder,
     updateCachedShow,
+    updateCachedShows,
 } from "./shows";
 import type { TvmazeShow } from "../api/tvmaze";
 
@@ -123,6 +125,72 @@ describe("addShow", () => {
         await addShow(SHOW_A);
         expect(await getTrackedIds()).toEqual([83]);
     });
+
+    it("loses shows when called concurrently for different shows", async () => {
+        // Regression guard: addShow does a read-then-write against
+        // chrome.storage.local, so overlapping calls race — each reads the
+        // same stale snapshot before any of them has written back, and
+        // later writes silently clobber earlier ones. This is exactly the
+        // bug that made importing 16 shows only persist 5. Code that adds
+        // several shows at once must use addShows instead, which batches
+        // them into a single read-modify-write (see the "addShows" tests
+        // below).
+        const shows = Array.from({ length: 16 }, (_, i) => ({
+            ...SHOW_A,
+            id: i,
+        }));
+        await Promise.all(shows.map((show) => addShow(show)));
+        expect((await getTrackedIds()).length).toBeLessThan(16);
+    });
+});
+
+describe("addShows", () => {
+    beforeEach(stubChrome);
+    afterEach(() => vi.unstubAllGlobals());
+
+    it("adds every show's ID to the tracked list", async () => {
+        await addShows([SHOW_A, SHOW_B]);
+        expect(await getTrackedIds()).toEqual([83, 84]);
+    });
+
+    it("stores every show's data in the cache", async () => {
+        await addShows([SHOW_A, SHOW_B]);
+        const shows = await getCachedShows();
+        expect(shows.map((s) => s.name)).toEqual([
+            "The Simpsons",
+            "Bob's Burgers",
+        ]);
+    });
+
+    it("preserves shows already tracked from a previous call", async () => {
+        await addShow(SHOW_A);
+        await addShows([SHOW_B]);
+        expect(await getTrackedIds()).toEqual([83, 84]);
+    });
+
+    it("skips a show that is already tracked without duplicating it", async () => {
+        await addShow(SHOW_A);
+        await addShows([SHOW_A, SHOW_B]);
+        expect(await getTrackedIds()).toEqual([83, 84]);
+    });
+
+    it("does not lose shows when adding a large batch at once", async () => {
+        // The scenario this fixes: importing many shows used to call addShow
+        // once per show concurrently, and the resulting race lost entries.
+        // Batching them into one addShows call must persist all of them.
+        const shows = Array.from({ length: 16 }, (_, i) => ({
+            ...SHOW_A,
+            id: i,
+        }));
+        await addShows(shows);
+        expect(await getTrackedIds()).toHaveLength(16);
+    });
+
+    it("writes to storage exactly once", async () => {
+        const setSpy = vi.mocked(chrome.storage.local.set);
+        await addShows([SHOW_A, SHOW_B]);
+        expect(setSpy).toHaveBeenCalledTimes(1);
+    });
 });
 
 describe("removeShow", () => {
@@ -173,6 +241,45 @@ describe("updateCachedShow", () => {
         await addShow(SHOW_A);
         await updateCachedShow({ ...SHOW_A, status: "Ended" });
         expect(await getTrackedIds()).toEqual([83]);
+    });
+});
+
+describe("updateCachedShows", () => {
+    beforeEach(stubChrome);
+    afterEach(() => vi.unstubAllGlobals());
+
+    it("replaces the cached data for every show", async () => {
+        await addShows([SHOW_A, SHOW_B]);
+        await updateCachedShows([
+            { ...SHOW_A, status: "Ended" },
+            { ...SHOW_B, status: "Ended" },
+        ]);
+        const shows = await getCachedShows();
+        expect(shows.every((s) => s.status === "Ended")).toBe(true);
+    });
+
+    it("does not change the tracked IDs", async () => {
+        await addShows([SHOW_A, SHOW_B]);
+        await updateCachedShows([{ ...SHOW_A, status: "Ended" }]);
+        expect(await getTrackedIds()).toEqual([83, 84]);
+    });
+
+    it("does not lose updates when refreshing a large batch at once", async () => {
+        const shows = Array.from({ length: 16 }, (_, i) => ({
+            ...SHOW_A,
+            id: i,
+        }));
+        await addShows(shows);
+        const refreshed = shows.map((s) => ({ ...s, status: "Ended" as const }));
+        await updateCachedShows(refreshed);
+        const cached = await getCachedShows();
+        expect(cached.every((s) => s.status === "Ended")).toBe(true);
+    });
+
+    it("writes to storage exactly once", async () => {
+        const setSpy = vi.mocked(chrome.storage.local.set);
+        await updateCachedShows([SHOW_A, SHOW_B]);
+        expect(setSpy).toHaveBeenCalledTimes(1);
     });
 });
 
