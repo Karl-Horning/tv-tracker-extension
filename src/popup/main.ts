@@ -8,7 +8,14 @@
 import "./style.css";
 import { fetchShow, searchShows } from "../api/tvmaze";
 import { refreshAllShows } from "../background/refresh";
-import { addShow, getCachedShows, removeShow } from "../storage/shows";
+import type { SortOrder } from "../filter/classify";
+import {
+    addShow,
+    getCachedShows,
+    getSortOrder,
+    removeShow,
+    setSortOrder,
+} from "../storage/shows";
 import { renderSearchResults, renderStatusBoard } from "./render";
 
 // ── DOM references ────────────────────────────────────────────────────
@@ -18,6 +25,10 @@ const $emptyState = document.getElementById("empty-state") as HTMLElement;
 const $lastUpdated = document.getElementById("last-updated") as HTMLElement;
 const $btnAdd = document.getElementById("btn-add-show") as HTMLButtonElement;
 const $btnRefresh = document.getElementById("btn-refresh") as HTMLButtonElement;
+const $sortBar = document.getElementById("sort-bar") as HTMLElement;
+const $sortSelect = document.getElementById(
+    "sort-select",
+) as HTMLSelectElement;
 const $searchPanel = document.getElementById("search-panel") as HTMLElement;
 const $searchInput = document.getElementById(
     "search-input",
@@ -29,6 +40,10 @@ const $btnCancel = document.getElementById(
     "btn-search-cancel",
 ) as HTMLButtonElement;
 
+// ── State ─────────────────────────────────────────────────────────────
+
+let currentSort: SortOrder = "title-asc";
+
 // ── Render ────────────────────────────────────────────────────────────
 
 /**
@@ -39,9 +54,10 @@ async function loadAndRender(): Promise<void> {
     const shows = await getCachedShows();
     const hasShows = shows.length > 0;
 
-    renderStatusBoard($sections, shows);
+    renderStatusBoard($sections, shows, new Date(), currentSort);
     $sections.hidden = false;
     $emptyState.hidden = hasShows;
+    $sortBar.hidden = !hasShows;
     $lastUpdated.textContent = `Updated ${new Date().toLocaleTimeString("en-US", {
         hour: "numeric",
         minute: "2-digit",
@@ -65,6 +81,7 @@ async function loadAndRender(): Promise<void> {
 function openSearch(): void {
     $searchPanel.hidden = false;
     $sections.hidden = true;
+    $sortBar.hidden = true;
     $searchInput.value = "";
     $searchResults.innerHTML = "";
     $searchInput.focus();
@@ -118,6 +135,14 @@ $searchResults.addEventListener("click", async (e) => {
     }
 });
 
+// ── Sort ──────────────────────────────────────────────────────────────
+
+$sortSelect.addEventListener("change", async () => {
+    currentSort = $sortSelect.value as SortOrder;
+    await setSortOrder(currentSort);
+    await loadAndRender();
+});
+
 // ── Refresh ───────────────────────────────────────────────────────────
 
 $btnRefresh.addEventListener("click", async () => {
@@ -132,4 +157,11 @@ $btnRefresh.addEventListener("click", async () => {
 
 // ── Init ──────────────────────────────────────────────────────────────
 
-void loadAndRender();
+/** Loads the saved sort preference, then renders the status board. */
+async function init(): Promise<void> {
+    currentSort = await getSortOrder();
+    $sortSelect.value = currentSort;
+    await loadAndRender();
+}
+
+void init();

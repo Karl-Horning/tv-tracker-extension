@@ -163,6 +163,41 @@ body {
     height: 15px;
 }
 
+/* === Sort control ================================================== */
+
+.sort-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+}
+
+.sort-label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.sort-select {
+    height: 34px;
+    padding: 0 8px;
+    border: 1.5px solid var(--line);
+    border-radius: 7px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.8125rem;
+    letter-spacing: 0.015em;
+}
+
+.sort-select:focus {
+    outline: 3px solid var(--green);
+    outline-offset: 2px;
+    border-color: var(--green);
+}
+
 /* === Status sections ============================================== */
 
 .show-sections {

@@ -196,6 +196,61 @@ describe("renderStatusBoard", () => {
         expect(epText).not.toContain("null");
     });
 
+    it("sorts shows by title within a section by default", () => {
+        const el = document.createElement("div");
+        renderStatusBoard(el, [SHOW_FRESH_AND_UPCOMING, SHOW_UPCOMING_ONLY], NOW);
+        const upcomingSection = el.querySelector(".status-section--upcoming");
+        const names = Array.from(
+            upcomingSection?.querySelectorAll(".show-name") ?? [],
+        ).map((n) => n.textContent);
+        expect(names).toEqual(["American Dad!", "The Simpsons"]);
+    });
+
+    it("sorts shows by title descending when requested", () => {
+        const el = document.createElement("div");
+        renderStatusBoard(
+            el,
+            [SHOW_FRESH_AND_UPCOMING, SHOW_UPCOMING_ONLY],
+            NOW,
+            "title-desc",
+        );
+        const upcomingSection = el.querySelector(".status-section--upcoming");
+        const names = Array.from(
+            upcomingSection?.querySelectorAll(".show-name") ?? [],
+        ).map((n) => n.textContent);
+        expect(names).toEqual(["The Simpsons", "American Dad!"]);
+    });
+
+    it("sorts shows by air date ascending within a section when requested", () => {
+        const el = document.createElement("div");
+        renderStatusBoard(
+            el,
+            [SHOW_FRESH_AND_UPCOMING, SHOW_UPCOMING_ONLY],
+            NOW,
+            "airdate-asc",
+        );
+        const upcomingSection = el.querySelector(".status-section--upcoming");
+        const names = Array.from(
+            upcomingSection?.querySelectorAll(".show-name") ?? [],
+        ).map((n) => n.textContent);
+        expect(names).toEqual(["The Simpsons", "American Dad!"]);
+    });
+
+    it("sorts shows by air date descending within a section when requested", () => {
+        const el = document.createElement("div");
+        renderStatusBoard(
+            el,
+            [SHOW_FRESH_AND_UPCOMING, SHOW_UPCOMING_ONLY],
+            NOW,
+            "airdate-desc",
+        );
+        const upcomingSection = el.querySelector(".status-section--upcoming");
+        const names = Array.from(
+            upcomingSection?.querySelectorAll(".show-name") ?? [],
+        ).map((n) => n.textContent);
+        expect(names).toEqual(["American Dad!", "The Simpsons"]);
+    });
+
     it("renders the section count chip with the number of shows in that section", () => {
         const el = document.createElement("div");
         renderStatusBoard(el, [SHOW_FRESH_AND_UPCOMING, SHOW_UPCOMING_ONLY], NOW);

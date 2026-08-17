@@ -1,18 +1,23 @@
 /**
  * @fileoverview Persistence layer for tracked shows using chrome.storage.local.
  *
- * Two keys are maintained in storage:
+ * Three keys are maintained in storage:
  *   - `trackedIds`  — ordered list of show IDs the user has added
  *   - `showCache`   — map of show ID → TvmazeShow with cached episode data
+ *   - `sortOrder`   — the user's chosen show sort order
  */
 
 import type { TvmazeShow } from "../api/tvmaze";
+import type { SortOrder } from "../filter/classify";
 
 /** Storage key for the ordered list of tracked show IDs. */
 const KEY_IDS = "trackedIds";
 
 /** Storage key for the cached TVmaze show data, keyed by string show ID. */
 const KEY_CACHE = "showCache";
+
+/** Storage key for the user's chosen show sort order. */
+const KEY_SORT = "sortOrder";
 
 /**
  * Returns the ordered list of tracked show IDs.
@@ -98,4 +103,23 @@ export async function updateCachedShow(show: TvmazeShow): Promise<void> {
     await chrome.storage.local.set({
         [KEY_CACHE]: { ...cache, [String(show.id)]: show },
     });
+}
+
+/**
+ * Returns the user's chosen sort order for shows within each section.
+ *
+ * @returns The stored sort order, or "title-asc" if none has been set.
+ */
+export async function getSortOrder(): Promise<SortOrder> {
+    const result = await chrome.storage.local.get(KEY_SORT);
+    return (result[KEY_SORT] as SortOrder | undefined) ?? "title-asc";
+}
+
+/**
+ * Stores the user's chosen sort order for shows within each section.
+ *
+ * @param order - The sort order to persist.
+ */
+export async function setSortOrder(order: SortOrder): Promise<void> {
+    await chrome.storage.local.set({ [KEY_SORT]: order });
 }
