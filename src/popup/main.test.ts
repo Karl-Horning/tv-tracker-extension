@@ -106,6 +106,24 @@ const SHOW_ENDED: TvmazeShow = {
     },
 };
 
+/** Show whose previous episode is a special with no episode number. */
+const SHOW_SPECIAL: TvmazeShow = {
+    id: 120,
+    name: "Robot Chicken",
+    status: "Ended",
+    _embedded: {
+        previousepisode: {
+            id: 7,
+            name: "Robot Chicken Adult Swim Special",
+            season: 11,
+            number: null,
+            airdate: "2026-08-30",
+            airstamp: "2026-08-30T23:30:00+00:00",
+            runtime: 15,
+        },
+    },
+};
+
 // ── renderStatusBoard ─────────────────────────────────────────────────
 
 describe("renderStatusBoard", () => {
@@ -168,6 +186,14 @@ describe("renderStatusBoard", () => {
         renderStatusBoard(el, [SHOW_HIATUS], NOW);
         const btn = el.querySelector<HTMLButtonElement>(".btn-remove");
         expect(btn?.dataset.showName).toBe("South Park");
+    });
+
+    it("omits the episode number for a special with no episode number", () => {
+        const el = document.createElement("div");
+        renderStatusBoard(el, [SHOW_SPECIAL], NOW);
+        const epText = el.querySelector(".show-ep span")?.textContent;
+        expect(epText).toContain("S11 ");
+        expect(epText).not.toContain("null");
     });
 
     it("renders the section count chip with the number of shows in that section", () => {

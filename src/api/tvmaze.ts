@@ -13,7 +13,8 @@ export interface TvmazeEpisode {
     id: number;
     name: string;
     season: number;
-    number: number;
+    /** Episode number within the season. Null for specials. */
+    number: number | null;
     /** Air date in "YYYY-MM-DD" format. */
     airdate: string;
     /** Air time as an ISO 8601 timestamp with timezone offset. */

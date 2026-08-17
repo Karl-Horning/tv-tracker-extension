@@ -263,13 +263,16 @@ function buildEpisodeText(show: TvmazeShow, group: ShowGroup): string {
 /**
  * Formats a season and episode number as a zero-padded "SxxExx" code.
  *
+ * TVmaze specials have no episode number, in which case only the season
+ * part is returned.
+ *
  * @param season - The season number.
- * @param number - The episode number within the season.
- * @returns A code string, for example "S02E09".
+ * @param number - The episode number within the season, or null for specials.
+ * @returns A code string, for example "S02E09" or "S11" for a special.
  */
-function formatEpisodeCode(season: number, number: number): string {
+function formatEpisodeCode(season: number, number: number | null): string {
     const pad = (value: number): string => String(value).padStart(2, "0");
-    return `S${pad(season)}E${pad(number)}`;
+    return number === null ? `S${pad(season)}` : `S${pad(season)}E${pad(number)}`;
 }
 
 /**
