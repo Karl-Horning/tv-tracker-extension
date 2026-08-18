@@ -1,0 +1,153 @@
+<!-- TV Tracker privacy policy, served via GitHub Pages from /docs. -->
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Privacy Policy — TV Tracker</title>
+        <meta
+            name="description"
+            content="What TV Tracker stores, what it talks to, and what it never does."
+        />
+        <link rel="canonical" href="https://karl-horning.github.io/tv-tracker-extension/privacy.html" />
+        <meta name="color-scheme" content="light dark" />
+        <meta name="theme-color" content="#fbfbfa" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#22272e" media="(prefers-color-scheme: dark)" />
+        <link rel="icon" href="assets/icon.png" />
+        <link rel="apple-touch-icon" href="assets/icon.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="assets/styles.css" />
+    </head>
+    <body>
+        <header class="policy-header">
+            <div class="wrap">
+                <a class="policy-back-link" href="index.html">&larr; TV Tracker</a>
+            </div>
+        </header>
+        <main class="policy">
+            <div class="wrap">
+                <h1>Privacy Policy</h1>
+                <p class="updated">Last updated 18 August 2026.</p>
+
+                <div class="summary">
+                    <p>
+                        TV Tracker has no accounts, no analytics, and no
+                        tracking. It stores your tracked shows locally in
+                        your browser and talks to one external service —
+                        the TVmaze API — to fetch show and episode data.
+                    </p>
+                </div>
+
+                <h2>What TV Tracker stores</h2>
+                <p>
+                    Your tracked show list, and your settings, are saved
+                    using your browser's extension storage. This data stays
+                    on your device — TV Tracker has no server of its own
+                    and cannot read it.
+                </p>
+
+                <h2>What TV Tracker talks to</h2>
+                <p>
+                    TV Tracker sends requests to
+                    <code>api.tvmaze.com</code> to search for shows and to
+                    fetch air-date information for shows you've added. No
+                    other network requests are made.
+                </p>
+
+                <h2>Permissions</h2>
+                <ul>
+                    <li>
+                        <code>storage</code> — to save your tracked shows and
+                        settings locally.
+                    </li>
+                    <li>
+                        <code>alarms</code> — to schedule the background
+                        refresh that keeps show data up to date every four
+                        hours.
+                    </li>
+                    <li>
+                        <code>host_permissions</code> for
+                        <code>api.tvmaze.com</code> — the only server TV
+                        Tracker is allowed to contact.
+                    </li>
+                </ul>
+
+                <h2>Import and export</h2>
+                <p>
+                    Exporting your list saves a JSON file to your device
+                    using your browser's normal download flow. Importing
+                    reads a JSON file you choose from your device. Neither
+                    action sends that file anywhere.
+                </p>
+
+                <h2>What TV Tracker does not do</h2>
+                <ul>
+                    <li>No accounts or sign-in.</li>
+                    <li>No analytics or tracking scripts.</li>
+                    <li>No advertising.</li>
+                    <li>No cookies.</li>
+                    <li>No sharing of data with third parties.</li>
+                </ul>
+
+                <h2>Questions</h2>
+                <p>
+                    TV Tracker is open source. If anything here is unclear,
+                    open an issue on
+                    <a href="https://github.com/Karl-Horning/tv-tracker-extension/issues"
+                        >GitHub</a
+                    >.
+                </p>
+            </div>
+        </main>
+
+        <!-- ── Footer ───────────────────────────────────────── -->
+        <footer>
+            <div class="wrap footer-inner">
+                <div class="footer-brand">
+                    <img src="assets/icon.png" alt="" width="20" height="20" />
+                    <div>
+                        <strong>TV Tracker</strong>
+                        <div class="footer-meta">Released under the MIT License.</div>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <a href="https://www.karlhorning.dev/" aria-label="Karl Horning's personal site">
+                        <img class="footer-icon" src="assets/icon-karlhorning.svg" alt="" width="20" height="20" />
+                    </a>
+                    <a href="https://www.linkedin.com/in/karl-horning/" aria-label="LinkedIn">
+                        <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                        <svg class="footer-icon" viewBox="0 0 640 640" aria-hidden="true">
+                            <path
+                                fill="currentColor"
+                                d="M160 96C124.7 96 96 124.7 96 160L96 480C96 515.3 124.7 544 160 544L480 544C515.3 544 544 515.3 544 480L544 160C544 124.7 515.3 96 480 96L160 96zM165 266.2L231.5 266.2L231.5 480L165 480L165 266.2zM236.7 198.5C236.7 219.8 219.5 237 198.2 237C176.9 237 159.7 219.8 159.7 198.5C159.7 177.2 176.9 160 198.2 160C219.5 160 236.7 177.2 236.7 198.5zM413.9 480L413.9 376C413.9 351.2 413.4 319.3 379.4 319.3C344.8 319.3 339.5 346.3 339.5 374.2L339.5 480L273.1 480L273.1 266.2L336.8 266.2L336.8 295.4L337.7 295.4C346.6 278.6 368.3 260.9 400.6 260.9C467.8 260.9 480.3 305.2 480.3 362.8L480.3 480L413.9 480z"
+                            />
+                        </svg>
+                    </a>
+                    <a href="https://github.com/Karl-Horning/tv-tracker-extension" aria-label="GitHub">
+                        <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                        <svg class="footer-icon" viewBox="0 0 640 640" aria-hidden="true">
+                            <path
+                                fill="currentColor"
+                                d="M280.5 426.5C214.5 418.5 168 371 168 309.5C168 284.5 177 257.5 192 239.5C185.5 223 186.5 188 194 173.5C214 171 241 181.5 257 196C276 190 296 187 320.5 187C345 187 365 190 383 195.5C398.5 181.5 426 171 446 173.5C453 187 454 222 447.5 239C463.5 258 472 283.5 472 309.5C472 371 425.5 417.5 358.5 426C375.5 437 387 461 387 488.5L387 540.5C387 555.5 399.5 564 414.5 558C505 523.5 576 433 576 321C576 179.5 461 64 319.5 64C178 64 64 179.5 64 321C64 432 134.5 524 229.5 558.5C243 563.5 256 554.5 256 541L256 501C249 504 240 506 232 506C199 506 179.5 488 165.5 454.5C160 441 154 433 142.5 431.5C136.5 431 134.5 428.5 134.5 425.5C134.5 419.5 144.5 415 154.5 415C169 415 181.5 424 194.5 442.5C204.5 457 215 463.5 227.5 463.5C240 463.5 248 459 259.5 447.5C268 439 274.5 431.5 280.5 426.5z"
+                            />
+                        </svg>
+                    </a>
+                    <a href="https://ko-fi.com/karlhorning" aria-label="Ko-fi">
+                        <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                        <svg class="footer-icon" viewBox="0 0 640 640" aria-hidden="true">
+                            <path
+                                fill="currentColor"
+                                d="M313.8 139C403.6 139 426.8 140.1 460.1 143.4C538.2 151.2 583.7 199.4 583.7 268.6L583.7 277.5C583.7 341.8 536.6 394.4 472.9 399.9C467.9 416.5 460.1 433.1 449.6 449.8C425.2 487.5 376.5 535.1 286.7 535.1L269 535.1C195.9 535.1 139.3 503.5 105.5 445.9C75.6 395.5 71.7 339.5 71.7 264.7C71.7 191 116.1 151.1 168.1 144.5C207.4 139.5 256.2 139 313.8 139zM313.8 180.6C253.4 180.6 210.2 181.1 177.5 186.1C131.5 192.8 113.2 218.8 113.2 265.3L113.4 291C114.6 348.3 120.5 388.1 140.9 425.5C167.5 474.8 215.7 493.7 270.6 493.7L287.8 493.7C359.8 493.7 394.8 458.8 414.1 428.3C423.5 412.8 431.8 395.6 436.3 374L439.6 360.2L459.5 360.2C503.8 360.2 542.1 324.2 542.1 278.2L542.1 269.9C542.1 218.4 509.9 191.2 454 184.6C422.4 181.8 403.6 180.7 313.8 180.7zM331 233.2C369.2 233.2 395.8 264.8 395.8 300.2C395.8 332.9 377.5 361.2 353.7 383.3C338.7 398.3 314.4 413.8 297.8 423.8C293.4 426.6 287.8 428.2 281.1 428.2C275.6 428.2 270.6 426.5 265.6 423.8C249 413.8 224.6 398.3 209.1 383.3C187.3 362.5 169.9 336.4 167.8 306.3L167.6 300.2C167.6 264.7 193.1 233.2 231.9 233.2C254.6 233.2 270.7 244.8 281.2 260.9C292.8 244.8 308.4 233.2 331.1 233.2zM453.5 229.3C481.8 229.3 497.3 245.9 497.3 272.5C497.3 299.1 481.8 315.2 453.5 315.2C444.6 315.2 439.7 310.2 439.7 303.5L439.7 240.9C439.7 234.2 444.7 229.3 453.5 229.3z"
+                            />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>
