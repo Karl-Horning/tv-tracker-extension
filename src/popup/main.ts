@@ -48,6 +48,9 @@ const $settingsMenu = document.getElementById(
 const $settingsSummary = $settingsMenu.querySelector(
     "summary",
 ) as HTMLElement;
+const $settingsPanel = document.getElementById(
+    "settings-panel",
+) as HTMLElement;
 const $themeSwitch = document.getElementById(
     "theme-switch",
 ) as HTMLButtonElement;
@@ -177,6 +180,24 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener("click", (e) => {
     if (!$settingsMenu.open) return;
     if (!$settingsMenu.contains(e.target as Node)) closeSettingsMenu();
+});
+
+// Fixed positioning needs pixel values, not CSS's percentage-of-ancestor
+// trick, so the panel's position is computed here. Chrome also sizes the
+// popup window to the page's rendered height, so reserve enough height
+// while the menu is open — measured live, so it's correct at any zoom
+// level or font size — and release it again on close.
+$settingsMenu.addEventListener("toggle", () => {
+    if ($settingsMenu.open) {
+        const summaryRect = $settingsSummary.getBoundingClientRect();
+        $settingsPanel.style.top = `${Math.round(summaryRect.bottom + 6)}px`;
+        $settingsPanel.style.right = `${Math.round(window.innerWidth - summaryRect.right)}px`;
+
+        const panelBottom = $settingsPanel.getBoundingClientRect().bottom;
+        document.body.style.minHeight = `${Math.ceil(panelBottom) + 8}px`;
+    } else {
+        document.body.style.minHeight = "";
+    }
 });
 
 // ── Appearance ────────────────────────────────────────────────────────

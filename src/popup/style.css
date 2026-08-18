@@ -221,9 +221,10 @@ body {
 }
 
 .settings-panel {
-    position: absolute;
-    right: 0;
-    top: calc(100% + 6px);
+    /* position: fixed escapes #app's overflow-y: auto, which would
+       otherwise clip the panel at #app's own short height. Position is
+       set in pixels by main.ts when the menu opens. */
+    position: fixed;
     width: 220px;
     background: var(--panel);
     border: 1px solid var(--line);
