@@ -45,6 +45,8 @@ describe("registerAlarm", () => {
         registerAlarm();
         expect(mockCreate).toHaveBeenCalledWith(
             ALARM_NAME,
+            // expect.any() is intentionally typed `any` by vitest.
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             expect.objectContaining({ periodInMinutes: expect.any(Number) }),
         );
     });

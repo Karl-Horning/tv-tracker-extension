@@ -93,15 +93,22 @@ async function loadAndRender(): Promise<void> {
     })}`;
 
     $sections.querySelectorAll<HTMLButtonElement>(".btn-remove").forEach((btn) => {
-        btn.addEventListener("click", async () => {
-            const showName = btn.dataset.showName ?? "this show";
-            if (!window.confirm(`Remove ${showName} from your tracked shows?`)) return;
-
-            const id = Number(btn.dataset.showId);
-            await removeShow(id);
-            await loadAndRender();
-        });
+        btn.addEventListener("click", () => void handleRemoveClick(btn));
     });
+}
+
+/**
+ * Removes a tracked show after the user confirms, then re-renders.
+ *
+ * @param btn - The remove button clicked, carrying the show's ID and name.
+ */
+async function handleRemoveClick(btn: HTMLButtonElement): Promise<void> {
+    const showName = btn.dataset.showName ?? "this show";
+    if (!window.confirm(`Remove ${showName} from your tracked shows?`)) return;
+
+    const id = Number(btn.dataset.showId);
+    await removeShow(id);
+    await loadAndRender();
 }
 
 // ── Search panel ──────────────────────────────────────────────────────
@@ -139,13 +146,27 @@ $searchInput.addEventListener("input", () => {
         $searchResults.innerHTML = "";
         return;
     }
-    searchTimer = setTimeout(async () => {
-        const results = await searchShows(query);
-        renderSearchResults($searchResults, results);
-    }, 300);
+    searchTimer = setTimeout(() => void runSearch(query), 300);
 });
 
-$searchResults.addEventListener("click", async (e) => {
+/**
+ * Searches TVmaze for the given query and renders the results.
+ *
+ * @param query - The search text entered by the user.
+ */
+async function runSearch(query: string): Promise<void> {
+    const results = await searchShows(query);
+    renderSearchResults($searchResults, results);
+}
+
+$searchResults.addEventListener("click", (e) => void handleSearchResultClick(e));
+
+/**
+ * Adds a show from the search results after its "Add" button is clicked.
+ *
+ * @param e - The click event, used to find the clicked result's button.
+ */
+async function handleSearchResultClick(e: Event): Promise<void> {
     const btn = (e.target as Element).closest<HTMLButtonElement>("[data-show-id]");
     if (!btn) return;
     const id = Number(btn.dataset.showId);
@@ -162,7 +183,7 @@ $searchResults.addEventListener("click", async (e) => {
         btn.disabled = false;
         btn.removeAttribute("aria-busy");
     }
-});
+}
 
 // ── Settings menu ─────────────────────────────────────────────────────
 
@@ -212,24 +233,33 @@ function applyTheme(theme: Theme): void {
     $themeSwitch.setAttribute("aria-checked", String(theme === "dark"));
 }
 
-$themeSwitch.addEventListener("click", async () => {
+$themeSwitch.addEventListener("click", () => void handleThemeSwitchClick());
+
+/** Toggles between light and dark theme and persists the choice. */
+async function handleThemeSwitchClick(): Promise<void> {
     const next: Theme =
         document.body.dataset.theme === "dark" ? "light" : "dark";
     applyTheme(next);
     await setTheme(next);
-});
+}
 
 // ── Sort ──────────────────────────────────────────────────────────────
 
-$sortSelect.addEventListener("change", async () => {
+$sortSelect.addEventListener("change", () => void handleSortChange());
+
+/** Applies the selected sort order, persists it, and re-renders. */
+async function handleSortChange(): Promise<void> {
     currentSort = $sortSelect.value as SortOrder;
     await setSortOrder(currentSort);
     await loadAndRender();
-});
+}
 
 // ── Import / export ──────────────────────────────────────────────────
 
-$btnRefresh.addEventListener("click", async () => {
+$btnRefresh.addEventListener("click", () => void handleRefreshClick());
+
+/** Refetches every tracked show from TVmaze and re-renders the board. */
+async function handleRefreshClick(): Promise<void> {
     $btnRefresh.disabled = true;
     try {
         await refreshAllShows();
@@ -238,9 +268,12 @@ $btnRefresh.addEventListener("click", async () => {
         $btnRefresh.disabled = false;
         closeSettingsMenu();
     }
-});
+}
 
-$btnExport.addEventListener("click", async () => {
+$btnExport.addEventListener("click", () => void handleExportClick());
+
+/** Downloads the current tracked shows as a JSON backup file. */
+async function handleExportClick(): Promise<void> {
     const backup = await buildBackup();
     const blob = new Blob([JSON.stringify(backup, null, 2)], {
         type: "application/json",
@@ -252,11 +285,14 @@ $btnExport.addEventListener("click", async () => {
     a.click();
     URL.revokeObjectURL(url);
     closeSettingsMenu();
-});
+}
 
 $btnImport.addEventListener("click", () => $importFile.click());
 
-$importFile.addEventListener("change", async () => {
+$importFile.addEventListener("change", () => void handleImportFileChange());
+
+/** Reads the chosen backup file and imports its shows. */
+async function handleImportFileChange(): Promise<void> {
     const file = $importFile.files?.[0];
     $importFile.value = "";
     if (!file) return;
@@ -279,7 +315,7 @@ $importFile.addEventListener("change", async () => {
     } finally {
         closeSettingsMenu();
     }
-});
+}
 
 // ── Init ──────────────────────────────────────────────────────────────
 

@@ -45,13 +45,13 @@ function stubChrome(): void {
     vi.stubGlobal("chrome", {
         storage: {
             local: {
-                get: vi.fn(async (keys: string | string[]) => {
+                get: vi.fn((keys: string | string[]) => {
                     const keyList = Array.isArray(keys) ? keys : [keys];
                     return Object.fromEntries(
                         keyList.map((k) => [k, store[k]]),
                     );
                 }),
-                set: vi.fn(async (items: Record<string, unknown>) => {
+                set: vi.fn((items: Record<string, unknown>) => {
                     Object.assign(store, items);
                 }),
             },
@@ -189,6 +189,8 @@ describe("addShows", () => {
     });
 
     it("writes to storage exactly once", async () => {
+        // vi.mocked() only reads the mock's type, it never calls it unbound.
+        // eslint-disable-next-line @typescript-eslint/unbound-method
         const setSpy = vi.mocked(chrome.storage.local.set);
         await addShows([SHOW_A, SHOW_B]);
         expect(setSpy).toHaveBeenCalledTimes(1);
@@ -279,6 +281,8 @@ describe("updateCachedShows", () => {
     });
 
     it("writes to storage exactly once", async () => {
+        // vi.mocked() only reads the mock's type, it never calls it unbound.
+        // eslint-disable-next-line @typescript-eslint/unbound-method
         const setSpy = vi.mocked(chrome.storage.local.set);
         await updateCachedShows([SHOW_A, SHOW_B]);
         expect(setSpy).toHaveBeenCalledTimes(1);
