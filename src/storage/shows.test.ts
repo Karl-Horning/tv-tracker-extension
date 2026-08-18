@@ -11,9 +11,11 @@ import {
     addShows,
     getCachedShows,
     getSortOrder,
+    getTheme,
     getTrackedIds,
     removeShow,
     setSortOrder,
+    setTheme,
     updateCachedShow,
     updateCachedShows,
 } from "./shows";
@@ -305,5 +307,30 @@ describe("setSortOrder", () => {
         await setSortOrder("airdate-desc");
         await setSortOrder("title-desc");
         expect(await getSortOrder()).toBe("title-desc");
+    });
+});
+
+describe("getTheme", () => {
+    beforeEach(stubChrome);
+    afterEach(() => vi.unstubAllGlobals());
+
+    it("returns null when no theme has been stored", async () => {
+        expect(await getTheme()).toBeNull();
+    });
+
+    it("returns the stored theme", async () => {
+        await setTheme("dark");
+        expect(await getTheme()).toBe("dark");
+    });
+});
+
+describe("setTheme", () => {
+    beforeEach(stubChrome);
+    afterEach(() => vi.unstubAllGlobals());
+
+    it("persists the theme across reads", async () => {
+        await setTheme("dark");
+        await setTheme("light");
+        expect(await getTheme()).toBe("light");
     });
 });
