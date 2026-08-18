@@ -2,7 +2,8 @@
  * @fileoverview Popup controller for the TV Tracker extension.
  *
  * Orchestrates data loading from chrome.storage.local, DOM rendering,
- * and user interactions (add show, remove show, refresh, import/export).
+ * and user interactions (add show, remove show, refresh, import/export,
+ * sort, appearance).
  */
 
 import "./style.css";
@@ -14,22 +15,20 @@ import {
     addShow,
     getCachedShows,
     getSortOrder,
+    getTheme,
     removeShow,
     setSortOrder,
+    setTheme,
+    type Theme,
 } from "../storage/shows";
 import { renderSearchResults, renderStatusBoard } from "./render";
 
 // ── DOM references ────────────────────────────────────────────────────
 
 const $sections = document.getElementById("show-sections") as HTMLElement;
+const $boardStatus = document.getElementById("board-status") as HTMLElement;
 const $emptyState = document.getElementById("empty-state") as HTMLElement;
-const $lastUpdated = document.getElementById("last-updated") as HTMLElement;
 const $btnAdd = document.getElementById("btn-add-show") as HTMLButtonElement;
-const $btnRefresh = document.getElementById("btn-refresh") as HTMLButtonElement;
-const $sortBar = document.getElementById("sort-bar") as HTMLElement;
-const $sortSelect = document.getElementById(
-    "sort-select",
-) as HTMLSelectElement;
 const $searchPanel = document.getElementById("search-panel") as HTMLElement;
 const $searchInput = document.getElementById(
     "search-input",
@@ -40,11 +39,31 @@ const $searchResults = document.getElementById(
 const $btnCancel = document.getElementById(
     "btn-search-cancel",
 ) as HTMLButtonElement;
+const $appFooter = document.getElementById("app-footer") as HTMLElement;
+const $showsCount = document.getElementById("shows-count") as HTMLElement;
+
+const $settingsMenu = document.getElementById(
+    "settings-menu",
+) as HTMLDetailsElement;
+const $settingsSummary = $settingsMenu.querySelector(
+    "summary",
+) as HTMLElement;
+const $settingsPanel = document.getElementById(
+    "settings-panel",
+) as HTMLElement;
+const $themeSwitch = document.getElementById(
+    "theme-switch",
+) as HTMLButtonElement;
+const $sortSelect = document.getElementById(
+    "sort-select",
+) as HTMLSelectElement;
+const $btnRefresh = document.getElementById("btn-refresh") as HTMLButtonElement;
 const $btnExport = document.getElementById("btn-export") as HTMLButtonElement;
 const $btnImport = document.getElementById("btn-import") as HTMLButtonElement;
 const $importFile = document.getElementById(
     "import-file",
 ) as HTMLInputElement;
+const $lastUpdated = document.getElementById("last-updated") as HTMLElement;
 
 // ── State ─────────────────────────────────────────────────────────────
 
@@ -63,7 +82,11 @@ async function loadAndRender(): Promise<void> {
     renderStatusBoard($sections, shows, new Date(), currentSort);
     $sections.hidden = false;
     $emptyState.hidden = hasShows;
-    $sortBar.hidden = !hasShows;
+    $appFooter.hidden = !hasShows;
+    $showsCount.textContent = `${shows.length} show${shows.length === 1 ? "" : "s"} tracked`;
+    $boardStatus.textContent = hasShows
+        ? `Showing ${shows.length} tracked show${shows.length === 1 ? "" : "s"}`
+        : "No shows tracked yet";
     $lastUpdated.textContent = `Updated ${new Date().toLocaleTimeString("en-US", {
         hour: "numeric",
         minute: "2-digit",
@@ -87,7 +110,7 @@ async function loadAndRender(): Promise<void> {
 function openSearch(): void {
     $searchPanel.hidden = false;
     $sections.hidden = true;
-    $sortBar.hidden = true;
+    $appFooter.hidden = true;
     $searchInput.value = "";
     $searchResults.innerHTML = "";
     $searchInput.focus();
@@ -141,6 +164,61 @@ $searchResults.addEventListener("click", async (e) => {
     }
 });
 
+// ── Settings menu ─────────────────────────────────────────────────────
+
+/** Closes the settings menu and returns focus to the button that opened it. */
+function closeSettingsMenu(): void {
+    if (!$settingsMenu.open) return;
+    $settingsMenu.open = false;
+    $settingsSummary.focus();
+}
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && $settingsMenu.open) closeSettingsMenu();
+});
+
+document.addEventListener("click", (e) => {
+    if (!$settingsMenu.open) return;
+    if (!$settingsMenu.contains(e.target as Node)) closeSettingsMenu();
+});
+
+// Fixed positioning needs pixel values, not CSS's percentage-of-ancestor
+// trick, so the panel's position is computed here. Chrome also sizes the
+// popup window to the page's rendered height, so reserve enough height
+// while the menu is open — measured live, so it's correct at any zoom
+// level or font size — and release it again on close.
+$settingsMenu.addEventListener("toggle", () => {
+    if ($settingsMenu.open) {
+        const summaryRect = $settingsSummary.getBoundingClientRect();
+        $settingsPanel.style.top = `${Math.round(summaryRect.bottom + 6)}px`;
+        $settingsPanel.style.right = `${Math.round(window.innerWidth - summaryRect.right)}px`;
+
+        const panelBottom = $settingsPanel.getBoundingClientRect().bottom;
+        document.body.style.minHeight = `${Math.ceil(panelBottom) + 8}px`;
+    } else {
+        document.body.style.minHeight = "";
+    }
+});
+
+// ── Appearance ────────────────────────────────────────────────────────
+
+/**
+ * Applies a theme to the document and updates the switch to match.
+ *
+ * @param theme - The theme to apply.
+ */
+function applyTheme(theme: Theme): void {
+    document.body.dataset.theme = theme;
+    $themeSwitch.setAttribute("aria-checked", String(theme === "dark"));
+}
+
+$themeSwitch.addEventListener("click", async () => {
+    const next: Theme =
+        document.body.dataset.theme === "dark" ? "light" : "dark";
+    applyTheme(next);
+    await setTheme(next);
+});
+
 // ── Sort ──────────────────────────────────────────────────────────────
 
 $sortSelect.addEventListener("change", async () => {
@@ -150,6 +228,17 @@ $sortSelect.addEventListener("change", async () => {
 });
 
 // ── Import / export ──────────────────────────────────────────────────
+
+$btnRefresh.addEventListener("click", async () => {
+    $btnRefresh.disabled = true;
+    try {
+        await refreshAllShows();
+        await loadAndRender();
+    } finally {
+        $btnRefresh.disabled = false;
+        closeSettingsMenu();
+    }
+});
 
 $btnExport.addEventListener("click", async () => {
     const backup = await buildBackup();
@@ -162,6 +251,7 @@ $btnExport.addEventListener("click", async () => {
     a.download = `tv-tracker-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
+    closeSettingsMenu();
 });
 
 $btnImport.addEventListener("click", () => $importFile.click());
@@ -186,25 +276,27 @@ $importFile.addEventListener("change", async () => {
         window.alert(
             err instanceof Error ? err.message : "Failed to import backup.",
         );
-    }
-});
-
-// ── Refresh ───────────────────────────────────────────────────────────
-
-$btnRefresh.addEventListener("click", async () => {
-    $btnRefresh.disabled = true;
-    try {
-        await refreshAllShows();
-        await loadAndRender();
     } finally {
-        $btnRefresh.disabled = false;
+        closeSettingsMenu();
     }
 });
 
 // ── Init ──────────────────────────────────────────────────────────────
 
-/** Loads the saved sort preference, then renders the status board. */
+/**
+ * Loads the saved theme and sort preference, applies them, then renders
+ * the status board.
+ *
+ * Falls back to the operating system's light/dark preference when the user
+ * has never made an explicit choice, without persisting that fallback.
+ */
 async function init(): Promise<void> {
+    const savedTheme = await getTheme();
+    const systemPrefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+    ).matches;
+    applyTheme(savedTheme ?? (systemPrefersDark ? "dark" : "light"));
+
     currentSort = await getSortOrder();
     $sortSelect.value = currentSort;
     await loadAndRender();

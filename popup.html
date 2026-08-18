@@ -8,7 +8,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Semi+Condensed:wght@600;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap"
             rel="stylesheet"
         />
     </head>
@@ -28,6 +28,154 @@
                     </svg>
                     Add show
                 </button>
+
+                <!-- ── Settings menu ──────────────────────────────── -->
+                <details class="settings-menu" id="settings-menu">
+                    <summary
+                        class="btn-settings"
+                        aria-label="Settings: appearance, sort, refresh, export, import"
+                    >
+                        <!--!Font Awesome Free v5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                        <svg viewBox="0 0 512 512" aria-hidden="true">
+                            <path
+                                fill="currentColor"
+                                d="M487.4 315.7l-42.6-24.6c4.3-23.2 4.3-47 0-70.2l42.6-24.6c4.9-2.8 7.1-8.6 5.5-14-11.1-35.6-30-67.8-54.7-94.6-3.8-4.1-10-5.1-14.8-2.3L380.8 110c-17.9-15.4-38.5-27.3-60.8-35.1V25.8c0-5.6-3.9-10.5-9.4-11.7-36.7-8.2-74.3-7.8-109.2 0-5.5 1.2-9.4 6.1-9.4 11.7V75c-22.2 7.9-42.8 19.8-60.8 35.1L88.7 85.5c-4.9-2.8-11-1.9-14.8 2.3-24.7 26.7-43.6 58.9-54.7 94.6-1.7 5.4.6 11.2 5.5 14L67.3 221c-4.3 23.2-4.3 47 0 70.2l-42.6 24.6c-4.9 2.8-7.1 8.6-5.5 14 11.1 35.6 30 67.8 54.7 94.6 3.8 4.1 10 5.1 14.8 2.3l42.6-24.6c17.9 15.4 38.5 27.3 60.8 35.1v49.2c0 5.6 3.9 10.5 9.4 11.7 36.7 8.2 74.3 7.8 109.2 0 5.5-1.2 9.4-6.1 9.4-11.7v-49.2c22.2-7.9 42.8-19.8 60.8-35.1l42.6 24.6c4.9 2.8 11 1.9 14.8-2.3 24.7-26.7 43.6-58.9 54.7-94.6 1.5-5.5-.7-11.3-5.6-14.1zM256 336c-44.1 0-80-35.9-80-80s35.9-80 80-80 80 35.9 80 80-35.9 80-80 80z"
+                            />
+                        </svg>
+                    </summary>
+                    <div class="settings-panel" id="settings-panel">
+                        <div class="theme-row">
+                            <span class="theme-row-label">
+                                <svg
+                                    class="theme-icon theme-icon-sun"
+                                    viewBox="0 0 20 20"
+                                    aria-hidden="true"
+                                >
+                                    <circle cx="10" cy="10" r="3.2" fill="currentColor" />
+                                    <path
+                                        d="M10 2.5v2M10 15.5v2M17.5 10h-2M4.5 10h-2M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4M15.3 15.3l-1.4-1.4M6.1 6.1L4.7 4.7"
+                                        stroke="currentColor"
+                                        stroke-width="1.5"
+                                        stroke-linecap="round"
+                                    />
+                                </svg>
+                                <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                <svg
+                                    class="theme-icon theme-icon-moon"
+                                    viewBox="0 0 640 640"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        fill="currentColor"
+                                        d="M320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576C388.8 576 451.3 548.8 497.3 504.6C504.6 497.6 506.7 486.7 502.6 477.5C498.5 468.3 488.9 462.6 478.8 463.4C473.9 463.8 469 464 464 464C362.4 464 280 381.6 280 280C280 207.9 321.5 145.4 382.1 115.2C391.2 110.7 396.4 100.9 395.2 90.8C394 80.7 386.6 72.5 376.7 70.3C358.4 66.2 339.4 64 320 64z"
+                                    />
+                                </svg>
+                                <span id="theme-label">Dark mode</span>
+                            </span>
+                            <button
+                                type="button"
+                                class="theme-switch"
+                                id="theme-switch"
+                                role="switch"
+                                aria-checked="false"
+                                aria-labelledby="theme-label"
+                            >
+                                <span class="switch-knob" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                        <hr />
+                        <p class="group-label" id="sort-label">Sort by</p>
+                        <select
+                            class="sort-select"
+                            id="sort-select"
+                            aria-labelledby="sort-label"
+                        >
+                            <option value="title-asc">Title (A–Z)</option>
+                            <option value="title-desc">Title (Z–A)</option>
+                            <option value="airdate-asc">
+                                Air date (soonest first)
+                            </option>
+                            <option value="airdate-desc">
+                                Air date (latest first)
+                            </option>
+                        </select>
+                        <hr />
+                        <button
+                            type="button"
+                            class="menu-item"
+                            id="btn-refresh"
+                        >
+                            <svg viewBox="0 0 20 20" aria-hidden="true">
+                                <path
+                                    d="M16 10a6 6 0 11-1.8-4.3M16 3v4h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
+                            Refresh now
+                        </button>
+                        <button
+                            type="button"
+                            class="menu-item"
+                            id="btn-export"
+                        >
+                            <svg viewBox="0 0 20 20" aria-hidden="true">
+                                <path
+                                    d="M10 3v9m0 0l-3.5-3.5M10 12l3.5-3.5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                                <path
+                                    d="M4 14v2a1 1 0 001 1h10a1 1 0 001-1v-2"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
+                            Export backup
+                        </button>
+                        <button
+                            type="button"
+                            class="menu-item"
+                            id="btn-import"
+                        >
+                            <svg viewBox="0 0 20 20" aria-hidden="true">
+                                <path
+                                    d="M10 12V3m0 0l-3.5 3.5M10 3l3.5 3.5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                                <path
+                                    d="M4 14v2a1 1 0 001 1h10a1 1 0 001-1v-2"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
+                            Import backup
+                        </button>
+                        <input
+                            type="file"
+                            id="import-file"
+                            accept="application/json"
+                            hidden
+                        />
+                        <p class="updated" id="last-updated"></p>
+                    </div>
+                </details>
             </header>
 
             <!-- ── Search panel (hidden by default) ──────────────── -->
@@ -61,17 +209,6 @@
                 ></ul>
             </section>
 
-            <!-- ── Sort control ───────────────────────────────────── -->
-            <div class="sort-bar" id="sort-bar" hidden>
-                <label class="sort-label" for="sort-select">Sort by</label>
-                <select class="sort-select" id="sort-select">
-                    <option value="title-asc">Title (A–Z)</option>
-                    <option value="title-desc">Title (Z–A)</option>
-                    <option value="airdate-asc">Air date (soonest first)</option>
-                    <option value="airdate-desc">Air date (latest first)</option>
-                </select>
-            </div>
-
             <!-- ── Show sections (populated from storage) ─────────── -->
             <main
                 class="show-sections"
@@ -79,6 +216,13 @@
                 aria-label="Tracked shows"
                 hidden
             >
+                <!-- Announces the board's contents to screen readers on change. -->
+                <div
+                    class="visually-hidden"
+                    id="board-status"
+                    role="status"
+                    aria-live="polite"
+                ></div>
                 <!-- Shown when no shows are tracked. -->
                 <p class="empty-state" id="empty-state" hidden>
                     No shows tracked yet. Use &ldquo;Add show&rdquo; above to
@@ -87,79 +231,8 @@
             </main>
 
             <!-- ── Footer ─────────────────────────────────────────── -->
-            <footer class="app-footer">
-                <span id="last-updated"></span>
-                <div class="footer-actions">
-                    <button
-                        class="btn-icon"
-                        type="button"
-                        id="btn-export"
-                        aria-label="Export tracked shows as a JSON file"
-                    >
-                        <svg viewBox="0 0 20 20" aria-hidden="true">
-                            <path
-                                d="M10 3v9m0 0l-3.5-3.5M10 12l3.5-3.5"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                            <path
-                                d="M4 14v2a1 1 0 001 1h10a1 1 0 001-1v-2"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                        </svg>
-                    </button>
-                    <button
-                        class="btn-icon"
-                        type="button"
-                        id="btn-import"
-                        aria-label="Import tracked shows from a JSON file"
-                    >
-                        <svg viewBox="0 0 20 20" aria-hidden="true">
-                            <path
-                                d="M10 12V3m0 0l-3.5 3.5M10 3l3.5 3.5"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                            <path
-                                d="M4 14v2a1 1 0 001 1h10a1 1 0 001-1v-2"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                        </svg>
-                    </button>
-                    <input
-                        type="file"
-                        id="import-file"
-                        accept="application/json"
-                        hidden
-                    />
-                    <button class="btn btn-ghost" type="button" id="btn-refresh">
-                        <svg viewBox="0 0 20 20" aria-hidden="true">
-                            <path
-                                d="M16 10a6 6 0 11-1.8-4.3M16 3v4h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                        </svg>
-                        Refresh
-                    </button>
-                </div>
+            <footer class="app-footer" id="app-footer" hidden>
+                <span id="shows-count"></span>
             </footer>
         </div>
 

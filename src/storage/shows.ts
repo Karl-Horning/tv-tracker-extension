@@ -1,10 +1,11 @@
 /**
  * @fileoverview Persistence layer for tracked shows using chrome.storage.local.
  *
- * Three keys are maintained in storage:
+ * Four keys are maintained in storage:
  *   - `trackedIds`  — ordered list of show IDs the user has added
  *   - `showCache`   — map of show ID → TvmazeShow with cached episode data
  *   - `sortOrder`   — the user's chosen show sort order
+ *   - `theme`       — the user's chosen light/dark appearance
  */
 
 import type { TvmazeShow } from "../api/tvmaze";
@@ -18,6 +19,12 @@ const KEY_CACHE = "showCache";
 
 /** Storage key for the user's chosen show sort order. */
 const KEY_SORT = "sortOrder";
+
+/** Storage key for the user's chosen light/dark appearance. */
+const KEY_THEME = "theme";
+
+/** The popup's light/dark appearance. */
+export type Theme = "light" | "dark";
 
 /**
  * Returns the ordered list of tracked show IDs.
@@ -161,4 +168,26 @@ export async function getSortOrder(): Promise<SortOrder> {
  */
 export async function setSortOrder(order: SortOrder): Promise<void> {
     await chrome.storage.local.set({ [KEY_SORT]: order });
+}
+
+/**
+ * Returns the user's explicitly chosen appearance.
+ *
+ * A null return means the user has never chosen — the popup should follow
+ * the operating system's light/dark preference instead of a fixed default.
+ *
+ * @returns "light", "dark", or null if no explicit choice has been stored.
+ */
+export async function getTheme(): Promise<Theme | null> {
+    const result = await chrome.storage.local.get(KEY_THEME);
+    return (result[KEY_THEME] as Theme | undefined) ?? null;
+}
+
+/**
+ * Stores the user's chosen appearance.
+ *
+ * @param theme - The appearance to persist.
+ */
+export async function setTheme(theme: Theme): Promise<void> {
+    await chrome.storage.local.set({ [KEY_THEME]: theme });
 }

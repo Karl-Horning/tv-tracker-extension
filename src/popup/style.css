@@ -1,29 +1,69 @@
 /**
  * Styles for the TV Tracker popup.
  *
- * Implements the Status Board design: shows grouped into sections by
- * status (Aired recently, Coming up, On hiatus, No upcoming episode).
- * Typography and spacing follow Google's HTML/CSS Style Guide and are
- * optimised for dyslexia-friendly readability throughout.
+ * Shows are grouped into sections by status (Aired recently, Coming up,
+ * On hiatus, No upcoming episode), each with a sticky heading and a small
+ * status dot. Secondary actions (appearance, sort, refresh, export, import)
+ * live in a single Settings menu to keep the header uncluttered. Typography
+ * and spacing follow Google's HTML/CSS Style Guide and are optimised for
+ * dyslexia-friendly readability throughout — Atkinson Hyperlegible is the
+ * only typeface used, in both the light and dark palettes below.
  */
 
 /* === Custom properties ============================================ */
 
+/*
+   --line meets WCAG 1.4.11 (3:1) for interactive control boundaries —
+   inputs, selects, buttons. --divider is for purely decorative separators
+   between content (row/section dividers, hr rules), which that criterion
+   doesn't apply to; kept soft so they organize calmly instead of standing
+   out like a functional edge.
+*/
 :root {
-    --bg: #eff3f1;
+    --bg: #fbfbfa;
     --panel: #ffffff;
-    --ink: #26303a;
-    --muted: #5b6560;
-    --line: #dde3e0;
+    --section-alt: #f1f0ee;
+    --ink: #1a1a1a;
+    --muted: #63666b;
+    --line: #868782;
+    --divider: #e4e4e2;
 
-    --green: #2e7d5b;
-    --green-bg: #e3f0e9;
-    --amber: #b6791f;
-    --amber-bg: #f6ebd8;
-    --slate: #4a5568;
-    --slate-bg: #eaeaea;
-    --rose: #a4453b;
-    --rose-bg: #f4e4e1;
+    --blue: #2456c4;
+    --blue-bg: #e2eafa;
+    --blue-text-on: #ffffff;
+    --rose-bg: #fbeeec;
+
+    --dot-fresh: #1f8f63;
+    --dot-upcoming: #b4740a;
+    --dot-hiatus: #7a7e85;
+    --dot-ended: #b03b32;
+}
+
+body[data-theme="dark"] {
+    /*
+       Modeled on GitHub's "dark dimmed" theme rather than a near-black
+       inversion of the light palette: a soft charcoal background instead
+       of near-black, and a panel/section-alt tone visibly lighter than bg
+       so dividers have a surface to sit on instead of floating on a flat
+       field.
+    */
+    --bg: #22272e;
+    --panel: #323942;
+    --section-alt: #323942;
+    --ink: #adbac7;
+    --muted: #99a4b0;
+    --line: #7b8591;
+    --divider: #454d57;
+
+    --blue: #539bf5;
+    --blue-bg: #152a45;
+    --blue-text-on: #0b1520;
+    --rose-bg: #3c2422;
+
+    --dot-fresh: #57ab5a;
+    --dot-upcoming: #e0a23f;
+    --dot-hiatus: #99a4b0;
+    --dot-ended: #e5534b;
 }
 
 /* === Reset / base ================================================= */
@@ -48,7 +88,7 @@ body {
 }
 
 :focus-visible {
-    outline: 3px solid var(--green);
+    outline: 3px solid var(--blue);
     outline-offset: 2px;
 }
 
@@ -75,17 +115,20 @@ body {
 .app-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 8px;
     padding: 16px 18px;
-    background: var(--panel);
-    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    border-bottom: 1px solid var(--divider);
 }
 
 .app-title {
-    font-family: "Barlow Semi Condensed", "Arial Narrow", sans-serif;
-    font-weight: 700;
-    font-size: 1.3125rem;
+    font-weight: 800;
+    font-size: 1.1875rem;
     letter-spacing: 0.01em;
+    flex: 1 1 auto;
 }
 
 /* === Buttons ====================================================== */
@@ -113,29 +156,24 @@ body {
 }
 
 .btn-primary {
-    background: var(--green);
-    color: #fff;
+    background: var(--blue);
+    color: var(--blue-text-on);
 }
 
 .btn-primary:hover {
-    background: #256649;
+    filter: brightness(0.92);
 }
 
 .btn-ghost {
     background: transparent;
-    color: var(--green);
+    color: var(--blue);
     font-size: 0.8125rem;
     min-height: 36px;
     padding: 6px 8px;
 }
 
 .btn-ghost:hover {
-    background: var(--green-bg);
-}
-
-.btn-ghost svg {
-    width: 14px;
-    height: 14px;
+    background: var(--blue-bg);
 }
 
 .btn-remove {
@@ -143,8 +181,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     padding: 0;
     border: 1.5px solid var(--line);
     border-radius: 7px;
@@ -154,8 +192,9 @@ body {
 }
 
 .btn-remove:hover {
-    border-color: var(--rose);
-    color: var(--rose);
+    border-color: var(--dot-ended);
+    color: var(--dot-ended);
+    background: var(--rose-bg);
 }
 
 .btn-remove svg {
@@ -163,29 +202,110 @@ body {
     height: 15px;
 }
 
-/* === Sort control ================================================== */
+/* === Settings menu ================================================= */
 
-.sort-bar {
+.settings-menu {
+    position: relative;
+}
+
+.settings-menu summary {
+    list-style: none;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    background: var(--panel);
-    border-bottom: 1px solid var(--line);
-}
-
-.sort-bar[hidden] {
-    display: none;
-}
-
-.sort-label {
-    font-size: 0.8125rem;
-    font-weight: 700;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1.5px solid var(--line);
+    cursor: pointer;
     color: var(--muted);
 }
 
+.settings-menu summary::-webkit-details-marker {
+    display: none;
+}
+
+.settings-menu[open] summary {
+    border-color: var(--blue);
+    color: var(--blue);
+    background: var(--blue-bg);
+}
+
+.settings-menu summary svg {
+    width: 19px;
+    height: 19px;
+}
+
+.settings-panel {
+    /* position: fixed escapes #app's overflow-y: auto, which would
+       otherwise clip the panel at #app's own short height. Position is
+       set in pixels by main.ts when the menu opens. */
+    position: fixed;
+    width: 220px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+    padding: 8px;
+    z-index: 5;
+}
+
+.settings-panel .group-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--muted);
+    padding: 6px 8px 4px;
+}
+
+.settings-panel hr {
+    border: none;
+    border-top: 1px solid var(--divider);
+    margin: 6px 0;
+}
+
+.settings-panel .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 10px 8px;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 0.84375rem;
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+.settings-panel .menu-item:hover {
+    background: var(--blue-bg);
+    color: var(--blue);
+}
+
+.settings-panel .menu-item svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.settings-panel .updated {
+    padding: 8px 8px 2px;
+    font-size: 0.71875rem;
+    color: var(--muted);
+    border-top: 1px solid var(--divider);
+    margin-top: 4px;
+}
+
+/* === Sort control (inside the Settings menu) ======================= */
+
 .sort-select {
-    height: 34px;
+    display: block;
+    width: 100%;
+    height: 36px;
+    margin: 0 0 6px;
     padding: 0 8px;
     border: 1.5px solid var(--line);
     border-radius: 7px;
@@ -196,33 +316,107 @@ body {
     letter-spacing: 0.015em;
 }
 
-.sort-select:focus {
-    outline: 3px solid var(--green);
-    outline-offset: 2px;
-    border-color: var(--green);
+/* === Appearance toggle (inside the Settings menu) =================== */
+
+.theme-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 8px;
+}
+
+.theme-row-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.84375rem;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+.theme-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--muted);
+}
+
+.theme-icon-moon {
+    display: none;
+}
+
+body[data-theme="dark"] .theme-icon-sun {
+    display: none;
+}
+
+body[data-theme="dark"] .theme-icon-moon {
+    display: block;
+}
+
+.settings-panel .theme-switch {
+    flex-shrink: 0;
+    width: 44px;
+    height: 26px;
+    padding: 3px;
+    border-radius: 999px;
+    border: none;
+    background: var(--muted);
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.15s ease;
+}
+
+.settings-panel .theme-switch:hover {
+    background: var(--muted);
+}
+
+.settings-panel .theme-switch .switch-knob {
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--panel);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    transform: translateX(0);
+    transition: transform 0.15s ease;
+}
+
+.settings-panel .theme-switch[aria-checked="true"] {
+    background: var(--blue);
+}
+
+.settings-panel .theme-switch[aria-checked="true"]:hover {
+    background: var(--blue);
+}
+
+.settings-panel .theme-switch[aria-checked="true"] .switch-knob {
+    transform: translateX(18px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .settings-panel .theme-switch,
+    .settings-panel .theme-switch .switch-knob {
+        transition: none;
+    }
 }
 
 /* === Status sections ============================================== */
 
 .show-sections {
     flex: 1;
-    overflow-y: auto;
-}
-
-.status-section {
-    margin: 14px 14px 0;
-}
-
-.status-section:last-child {
-    margin-bottom: 14px;
 }
 
 .section-head {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 7px 10px;
-    border-radius: 7px 7px 0 0;
+    padding: 8px 18px;
+    background: var(--section-alt);
+    position: sticky;
+    top: 73px;
+    z-index: 2;
+    border-bottom: 1px solid var(--divider);
 }
 
 .section-indicator {
@@ -232,78 +426,50 @@ body {
     flex-shrink: 0;
 }
 
+.status-section--fresh .section-indicator {
+    background: var(--dot-fresh);
+}
+
+.status-section--upcoming .section-indicator {
+    background: var(--dot-upcoming);
+}
+
+.status-section--hiatus .section-indicator {
+    background: var(--dot-hiatus);
+}
+
+.status-section--ended .section-indicator {
+    background: var(--dot-ended);
+}
+
 .section-label {
-    font-family: "Barlow Semi Condensed", "Arial Narrow", sans-serif;
-    font-weight: 700;
-    font-size: 0.9375rem;
+    font-weight: 800;
+    font-size: 0.84375rem;
     letter-spacing: 0.02em;
-    flex: 1;
+    flex: 1 1 auto;
 }
 
 .section-count {
     font-size: 0.75rem;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 999px;
-    background: rgba(0, 0, 0, 0.08);
-}
-
-.status-section--fresh .section-head {
-    background: var(--green-bg);
-    color: var(--green);
-}
-
-.status-section--fresh .section-indicator {
-    background: var(--green);
-}
-
-.status-section--upcoming .section-head {
-    background: var(--amber-bg);
-    color: var(--amber);
-}
-
-.status-section--upcoming .section-indicator {
-    background: var(--amber);
-}
-
-.status-section--hiatus .section-head {
-    background: var(--slate-bg);
-    color: var(--slate);
-}
-
-.status-section--hiatus .section-indicator {
-    background: #9b958a;
-}
-
-.status-section--ended .section-head {
-    background: var(--rose-bg);
-    color: var(--rose);
-}
-
-.status-section--ended .section-indicator {
-    background: var(--rose);
+    color: var(--muted);
+    margin-left: auto;
+    width: 34px;
+    text-align: center;
+    flex-shrink: 0;
 }
 
 /* === Section body (show rows) ===================================== */
 
 .section-body {
     list-style: none;
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-top: none;
-    border-radius: 0 0 7px 7px;
 }
 
 .show-row {
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    padding: 12px;
-    border-bottom: 1px solid var(--line);
-}
-
-.show-row:last-child {
-    border-bottom: none;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--divider);
 }
 
 .show-info {
@@ -313,7 +479,7 @@ body {
 
 .show-name {
     font-weight: 700;
-    font-size: 0.9375rem;
+    font-size: 0.90625rem;
     margin-bottom: 4px;
 }
 
@@ -341,50 +507,21 @@ body {
 /* === Footer ======================================================= */
 
 .app-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 18px;
-    font-size: 0.75rem;
+    padding: 10px 18px 14px;
+    font-size: 0.71875rem;
     color: var(--muted);
-    border-top: 1px solid var(--line);
+    text-align: center;
 }
 
-.footer-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.btn-icon {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    border: none;
-    border-radius: 7px;
-    background: transparent;
-    color: var(--green);
-    cursor: pointer;
-}
-
-.btn-icon:hover {
-    background: var(--green-bg);
-}
-
-.btn-icon svg {
-    width: 16px;
-    height: 16px;
+.app-footer[hidden] {
+    display: none;
 }
 
 /* === Search panel ================================================= */
 
 .search-panel {
     background: var(--panel);
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--divider);
 }
 
 .search-bar {
@@ -408,20 +545,20 @@ body {
 }
 
 .search-input:focus {
-    outline: 3px solid var(--green);
+    outline: 3px solid var(--blue);
     outline-offset: 2px;
-    border-color: var(--green);
+    border-color: var(--blue);
 }
 
 .search-results {
     list-style: none;
     max-height: 320px;
     overflow-y: auto;
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--divider);
 }
 
 .search-result {
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--divider);
 }
 
 .search-result:last-child {
@@ -442,11 +579,11 @@ body {
 }
 
 .search-result-btn:hover {
-    background: var(--green-bg);
+    background: var(--blue-bg);
 }
 
 .search-result-btn:focus-visible {
-    outline: 3px solid var(--green);
+    outline: 3px solid var(--blue);
     outline-offset: -3px;
 }
 
