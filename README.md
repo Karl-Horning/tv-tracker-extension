@@ -20,6 +20,7 @@ A Chrome extension for tracking TV shows. See when each show last aired and when
 - [Vite](https://vitejs.dev/)
 - [Vitest](https://vitest.dev/)
 - [axe-core](https://github.com/dequelabs/axe-core) (automated accessibility testing)
+- [ESLint](https://eslint.org/) with [typescript-eslint](https://typescript-eslint.io/)'s type-checked rules
 - [TVmaze public API](https://www.tvmaze.com/api)
 
 ## Notable decisions
@@ -32,6 +33,7 @@ A Chrome extension for tracking TV shows. See when each show last aired and when
 - **Settings live in a native `<details>` menu** — fully keyboard-operable with Tab, Enter, and Escape.
 - **The landing page (`docs/`) stays plain HTML and CSS, not React** — GitHub Pages serves `docs/` with no build step, and `docs/index.test.ts` reads `index.html` directly for its accessibility check, which a templating layer would need a build step to satisfy. `index.html` and `privacy.html` share one `docs/assets/styles.css`; the footer markup is still duplicated between the two, accepted as the cost of not introducing a build step.
 - **The landing page hero's buttons use fixed colours, not the shared `--blue` token** — `--blue` is intentionally lighter in dark mode for text and link legibility, but the hero background stays dark regardless of page theme. Reusing the token as a solid button fill dropped white button text below WCAG contrast in dark mode.
+- **ESLint uses typescript-eslint's type-checked rules, not just syntax rules** — this caught several async event listeners passed directly to `addEventListener`/`setTimeout` (a real unhandled-rejection risk, not a style nit), and required a `tsconfig.docs.json` so `docs/*.test.ts` — previously outside every tsconfig and never type-checked by `npm run build` — has a project to resolve against.
 
 ## Local development
 
@@ -54,6 +56,7 @@ Then load the extension in Chrome:
 | --------------------- | --------------------------------- |
 | `npm run build`       | Type-check and compile to `dist/` |
 | `npm run dev`         | Start the Vite dev server         |
+| `npm run lint`        | Lint the whole project            |
 | `npm test`            | Run all tests once                |
 | `npm run test:watch`  | Run tests in watch mode           |
 

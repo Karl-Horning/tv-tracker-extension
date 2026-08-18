@@ -21,7 +21,9 @@ export const ALARM_PERIOD_MINUTES = 240;
  * any existing alarm with the same name rather than creating a duplicate.
  */
 export function registerAlarm(): void {
-    chrome.alarms.create(ALARM_NAME, { periodInMinutes: ALARM_PERIOD_MINUTES });
+    void chrome.alarms.create(ALARM_NAME, {
+        periodInMinutes: ALARM_PERIOD_MINUTES,
+    });
 }
 
 /**

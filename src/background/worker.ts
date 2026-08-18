@@ -7,4 +7,8 @@
 import { handleAlarm, registerAlarm } from "./refresh";
 
 chrome.runtime.onInstalled.addListener(registerAlarm);
-chrome.alarms.onAlarm.addListener(handleAlarm);
+chrome.alarms.onAlarm.addListener((alarm) => {
+    handleAlarm(alarm).catch((err: unknown) => {
+        console.error("Failed to handle alarm:", err);
+    });
+});

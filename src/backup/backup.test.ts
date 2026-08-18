@@ -32,11 +32,11 @@ function stubChrome(): void {
     vi.stubGlobal("chrome", {
         storage: {
             local: {
-                get: vi.fn(async (keys: string | string[]) => {
+                get: vi.fn((keys: string | string[]) => {
                     const keyList = Array.isArray(keys) ? keys : [keys];
                     return Object.fromEntries(keyList.map((k) => [k, store[k]]));
                 }),
-                set: vi.fn(async (items: Record<string, unknown>) => {
+                set: vi.fn((items: Record<string, unknown>) => {
                     Object.assign(store, items);
                 }),
             },
@@ -54,7 +54,7 @@ function stubChrome(): void {
 function stubFetch(shows: Record<number, TvmazeShow>, failIds: number[] = []): void {
     vi.stubGlobal(
         "fetch",
-        vi.fn(async (url: string) => {
+        vi.fn((url: string) => {
             const id = Number(url.match(/\/shows\/(\d+)/)?.[1]);
             if (failIds.includes(id)) {
                 return { ok: false, status: 404, json: () => Promise.resolve({}) };
