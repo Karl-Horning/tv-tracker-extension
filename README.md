@@ -1,6 +1,6 @@
 # TV Tracker
 
-A Chrome extension for tracking TV shows. See when each show last aired and when it is next on, all in one place.
+A Chrome extension for tracking TV shows. See when each show last aired and when it is next on.
 
 ## Features
 
@@ -10,6 +10,7 @@ A Chrome extension for tracking TV shows. See when each show last aired and when
 - **Sort** — order tracked shows by title or air date, ascending or descending.
 - **Import and export** — back up your tracked shows to a JSON file, or restore them on another browser.
 - **Remove** — remove a show from your list at any time, with a confirmation prompt first.
+- **Light and dark mode** — switch anytime from Settings. Follows your system preference until you choose one explicitly.
 
 ## Tech stack
 
@@ -23,7 +24,10 @@ A Chrome extension for tracking TV shows. See when each show last aired and when
 
 - **Imported shows always refetch fresh data** — a backup file only stores show IDs and names, not episode data. Restoring from it re-fetches each show from TVmaze rather than trusting a snapshot that may be out of date.
 - **Storage writes are batched, not per-show** — `chrome.storage.local` reads and writes aren't atomic. Adding or refreshing several shows with one write per show raced and silently dropped entries under concurrent calls; everything now goes through a single read-modify-write per batch.
-- **Delete uses the native confirm() dialogue** — simpler and just as accessible as a custom modal, and it avoids the focus-trap and keyboard-handling work a bespoke dialogue would need.
+- **Delete uses the native confirm() dialogue** — simpler and just as accessible as a custom modal.
+- **Every colour pair meets WCAG AA contrast minimums** — 4.5:1 for text, 3:1 for interactive boundaries like borders and buttons, in both the light and dark themes.
+- **Dark mode is calibrated, not inverted from light mode** — background and text tones avoid the glare of a near-black/near-white pairing, the same principle already used in light mode.
+- **Settings live in a native `<details>` menu** — fully keyboard-operable with Tab, Enter, and Escape.
 
 ## Local development
 
