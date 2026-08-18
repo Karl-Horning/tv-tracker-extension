@@ -12,13 +12,21 @@
 
 /* === Custom properties ============================================ */
 
+/*
+   --line meets WCAG 1.4.11 (3:1) for interactive control boundaries —
+   inputs, selects, buttons. --divider is for purely decorative separators
+   between content (row/section dividers, hr rules), which that criterion
+   doesn't apply to; kept soft so they organize calmly instead of standing
+   out like a functional edge.
+*/
 :root {
     --bg: #fbfbfa;
     --panel: #ffffff;
     --section-alt: #f1f0ee;
     --ink: #1a1a1a;
     --muted: #63666b;
-    --line: #e4e4e2;
+    --line: #868782;
+    --divider: #e4e4e2;
 
     --blue: #2456c4;
     --blue-bg: #e2eafa;
@@ -32,22 +40,30 @@
 }
 
 body[data-theme="dark"] {
-    --bg: #16181b;
-    --panel: #1e2124;
-    --section-alt: #1e2124;
-    --ink: #ececea;
-    --muted: #9aa0a6;
-    --line: #63696f;
+    /*
+       Modeled on GitHub's "dark dimmed" theme rather than a near-black
+       inversion of the light palette: a soft charcoal background instead
+       of near-black, and a panel/section-alt tone visibly lighter than bg
+       so dividers have a surface to sit on instead of floating on a flat
+       field.
+    */
+    --bg: #22272e;
+    --panel: #323942;
+    --section-alt: #323942;
+    --ink: #adbac7;
+    --muted: #99a4b0;
+    --line: #7b8591;
+    --divider: #454d57;
 
-    --blue: #6e9bff;
-    --blue-bg: #1d2a4a;
-    --blue-text-on: #0e1524;
-    --rose-bg: #3a211e;
+    --blue: #539bf5;
+    --blue-bg: #152a45;
+    --blue-text-on: #0b1520;
+    --rose-bg: #3c2422;
 
-    --dot-fresh: #34b27a;
+    --dot-fresh: #57ab5a;
     --dot-upcoming: #e0a23f;
-    --dot-hiatus: #9aa0a6;
-    --dot-ended: #e2685c;
+    --dot-hiatus: #99a4b0;
+    --dot-ended: #e5534b;
 }
 
 /* === Reset / base ================================================= */
@@ -105,7 +121,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 3;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--divider);
 }
 
 .app-title {
@@ -243,7 +259,7 @@ body {
 
 .settings-panel hr {
     border: none;
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--divider);
     margin: 6px 0;
 }
 
@@ -279,7 +295,7 @@ body {
     padding: 8px 8px 2px;
     font-size: 0.71875rem;
     color: var(--muted);
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--divider);
     margin-top: 4px;
 }
 
@@ -400,7 +416,7 @@ body[data-theme="dark"] .theme-icon-moon {
     position: sticky;
     top: 73px;
     z-index: 2;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--divider);
 }
 
 .section-indicator {
@@ -453,7 +469,7 @@ body[data-theme="dark"] .theme-icon-moon {
     align-items: flex-start;
     gap: 12px;
     padding: 12px 18px;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--divider);
 }
 
 .show-info {
@@ -505,7 +521,7 @@ body[data-theme="dark"] .theme-icon-moon {
 
 .search-panel {
     background: var(--panel);
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--divider);
 }
 
 .search-bar {
@@ -538,11 +554,11 @@ body[data-theme="dark"] .theme-icon-moon {
     list-style: none;
     max-height: 320px;
     overflow-y: auto;
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--divider);
 }
 
 .search-result {
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--divider);
 }
 
 .search-result:last-child {
