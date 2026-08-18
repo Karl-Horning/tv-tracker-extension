@@ -1,0 +1,541 @@
+/* Shared styles for the landing page and privacy policy pages. */
+
+:root {
+    --bg: #fbfbfa;
+    --panel: #ffffff;
+    --footer-bg: #f1f1ef;
+    --ink: #1a1a1a;
+    --muted: #63666b;
+    --divider: #e4e4e2;
+    --blue: #2456c4;
+    --blue-hover: #1c4499;
+    --blue-bg: #e2eafa;
+
+    --fresh: #1f8f63;
+    --fresh-bg: #e3f0e9;
+    --upcoming: #b4740a;
+    --upcoming-bg: #f6ebd8;
+    --hiatus: #7a7e85;
+    --hiatus-bg: #eaeaea;
+    --ended: #b03b32;
+    --ended-bg: #f4e4e1;
+    --accent2: #7c5cbf;
+    --accent2-bg: #efe8fa;
+
+    --shadow: rgba(20, 30, 50, 0.08);
+    --shadow-strong: rgba(20, 30, 50, 0.24);
+
+    /* Matches the toolbar icon (public/assets.svg) exactly. Used on the
+       hero, which stays this dark tone regardless of page theme. */
+    --icon-fresh: #57ab5a;
+    --icon-upcoming: #e0a23f;
+    --icon-hiatus: #99a4b0;
+    --icon-ended: #e5534b;
+    --icon-bg: #22272e;
+}
+
+/* --bg sits below the hero/footer tone; --panel sits above both. */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #1c2128;
+        --panel: #2d333b;
+        --footer-bg: #22272e;
+        --ink: #cdd9e5;
+        --muted: #909dab;
+        --divider: #444c56;
+        --blue: #539bf5;
+        --blue-hover: #6cb0ff;
+        --blue-bg: rgba(83, 155, 245, 0.1);
+
+        --fresh: #57ab5a;
+        --fresh-bg: rgba(87, 171, 90, 0.1);
+        --upcoming: #e0a23f;
+        --upcoming-bg: rgba(224, 162, 63, 0.1);
+        --hiatus: #99a4b0;
+        --hiatus-bg: rgba(153, 164, 176, 0.1);
+        --ended: #e5534b;
+        --ended-bg: rgba(229, 83, 75, 0.1);
+        --accent2: #b39ddb;
+        --accent2-bg: rgba(179, 157, 219, 0.1);
+
+        --shadow: rgba(0, 0, 0, 0.24);
+        --shadow-strong: rgba(0, 0, 0, 0.45);
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Atkinson Hyperlegible", Verdana, Tahoma, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+}
+
+a {
+    color: var(--blue);
+}
+
+a:hover {
+    color: var(--blue-hover);
+}
+
+:focus-visible {
+    outline: 3px solid var(--blue);
+    outline-offset: 2px;
+}
+
+/* The default outline colour falls below 3:1 against the dark hero
+   background, so the hero uses the same accent blue as the extension's
+   own dark theme instead. */
+.hero :focus-visible {
+    outline-color: #539bf5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+.wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+}
+
+/* Fixed colours, not --blue: that token lightens in dark mode. */
+.btn-primary {
+    background: #2456c4;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #1c4499;
+    color: #fff;
+}
+
+.btn-ghost {
+    background: var(--panel);
+    color: var(--ink);
+    border: 1.5px solid var(--divider);
+}
+
+.btn-ghost:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+}
+
+.btn-dark {
+    background: #323942;
+    color: #ececea;
+}
+
+.btn-dark:hover {
+    background: #3a4249;
+    color: #ececea;
+}
+
+/* === Hero =============================================================== */
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--icon-bg);
+}
+
+.hero-pattern {
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    display: grid;
+    grid-template-columns: repeat(6, 44px);
+    gap: 14px;
+    opacity: 0.9;
+    transform: rotate(8deg);
+}
+
+.hero-pattern div {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+}
+
+.hero-inner {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 96px 24px 100px;
+    position: relative;
+    text-align: center;
+}
+
+.hero-badge {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 24px;
+}
+
+.hero h1 {
+    color: #ececea;
+    font-size: 44px;
+    line-height: 1.15;
+    margin: 0 0 18px;
+    font-weight: 700;
+}
+
+.hero p {
+    color: #adbac7;
+    font-size: 19px;
+    margin: 0 0 36px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* === Screenshot ========================================================== */
+
+.screenshot-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: -64px;
+    position: relative;
+    z-index: 2;
+}
+
+.screenshot-frame {
+    width: 340px;
+    max-width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 30px 70px var(--shadow-strong);
+    overflow: hidden;
+    border: 1px solid var(--divider);
+    background: var(--panel);
+}
+
+.screenshot-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* === Features ============================================================ */
+
+.features {
+    padding: 80px 0 56px;
+}
+
+.features h2 {
+    font-size: 26px;
+    margin: 0 0 40px;
+    text-align: center;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px 32px;
+    max-width: 880px;
+    margin: 0 auto;
+}
+
+.feature-item {
+    display: flex;
+    gap: 14px;
+    text-align: left;
+}
+
+.feature-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.feature-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.feature-item h3 {
+    margin: 4px 0 4px;
+    font-size: 16px;
+}
+
+.feature-item p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+/* === Privacy & permissions =============================================== */
+
+.privacy {
+    padding: 72px 0 64px;
+    border-top: 1px solid var(--divider);
+    text-align: center;
+}
+
+.privacy h2 {
+    font-size: 26px;
+    margin: 0 0 16px;
+}
+
+.privacy-intro {
+    font-size: 15.5px;
+    color: var(--muted);
+    margin: 0 auto;
+    max-width: 56ch;
+}
+
+.permissions-heading {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 48px 0 20px;
+}
+
+.permissions {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 720px;
+}
+
+.permissions li {
+    background: var(--panel);
+    border: 1px solid var(--divider);
+    border-radius: 12px;
+    padding: 20px 18px;
+    text-align: left;
+}
+
+.permissions code {
+    display: inline-block;
+    color: var(--ink);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12.5px;
+    background: var(--blue-bg);
+    padding: 3px 7px;
+    border-radius: 5px;
+}
+
+.permissions p {
+    margin: 10px 0 0;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.privacy-links {
+    margin: 40px 0 0;
+    font-size: 14px;
+}
+
+@media (max-width: 640px) {
+    .permissions {
+        grid-template-columns: 1fr;
+    }
+}
+
+.store {
+    padding: 16px 0 56px;
+    text-align: center;
+}
+
+.store-badge {
+    display: block;
+    width: 190px;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid var(--divider);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.store a:hover .store-badge {
+    opacity: 0.85;
+}
+
+/* === Footer =============================================================== */
+
+footer {
+    background: var(--footer-bg);
+    border-top: 1px solid var(--divider);
+}
+
+.footer-inner {
+    padding: 32px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer-brand img {
+    display: block;
+    border-radius: 5px;
+}
+
+.footer-brand strong {
+    display: block;
+    font-size: 14px;
+    color: var(--ink);
+}
+
+.footer-meta {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.footer-links {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-links a {
+    display: inline-flex;
+    padding: 8px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--muted);
+}
+
+.footer-links a:hover {
+    color: var(--blue);
+    background: var(--blue-bg);
+}
+
+.footer-icon {
+    width: 20px;
+    height: 20px;
+}
+
+@media (max-width: 880px) {
+    .feature-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .hero h1 {
+        font-size: 32px;
+    }
+    .hero p {
+        font-size: 17px;
+    }
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+    .hero-pattern {
+        display: none;
+    }
+    .footer-inner {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* === Policy page (privacy.html) ========================================== */
+
+.policy-header {
+    padding: 40px 0 8px;
+}
+
+.policy-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14.5px;
+    text-decoration: none;
+}
+
+.policy {
+    padding: 24px 0 72px;
+}
+
+.policy .wrap {
+    max-width: 720px;
+}
+
+.policy h1 {
+    font-size: 32px;
+    margin: 0 0 6px;
+}
+
+.policy .updated {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 32px;
+}
+
+.policy h2 {
+    font-size: 19px;
+    margin: 40px 0 12px;
+}
+
+.policy p,
+.policy li {
+    font-size: 15.5px;
+}
+
+.policy ul {
+    padding-left: 22px;
+}
+
+.policy code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13.5px;
+    background: var(--blue-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+}
+
+.policy .summary {
+    background: var(--panel);
+    border: 1px solid var(--divider);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin: 0;
+}
+
+.policy .summary p {
+    margin: 0;
+}

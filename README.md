@@ -2,6 +2,8 @@
 
 A Chrome extension for tracking TV shows. See when each show last aired and when it is next on.
 
+[Website](https://www.karlhorning.dev/tv-tracker-extension/) · [Privacy Policy](https://www.karlhorning.dev/tv-tracker-extension/privacy.html)
+
 ## Features
 
 - **Status Board** — shows are grouped into four sections: Aired recently, Coming up, On hiatus, and No upcoming episode. A show can appear in more than one section at the same time.
@@ -28,6 +30,8 @@ A Chrome extension for tracking TV shows. See when each show last aired and when
 - **Every colour pair meets WCAG AA contrast minimums** — 4.5:1 for text, 3:1 for interactive boundaries like borders and buttons, in both the light and dark themes.
 - **Dark mode is calibrated, not inverted from light mode** — background and text tones avoid the glare of a near-black/near-white pairing, the same principle already used in light mode.
 - **Settings live in a native `<details>` menu** — fully keyboard-operable with Tab, Enter, and Escape.
+- **The landing page (`docs/`) stays plain HTML and CSS, not React** — GitHub Pages serves `docs/` with no build step, and `docs/index.test.ts` reads `index.html` directly for its accessibility check, which a templating layer would need a build step to satisfy. `index.html` and `privacy.html` share one `docs/assets/styles.css`; the footer markup is still duplicated between the two, accepted as the cost of not introducing a build step.
+- **The landing page hero's buttons use fixed colours, not the shared `--blue` token** — `--blue` is intentionally lighter in dark mode for text and link legibility, but the hero background stays dark regardless of page theme. Reusing the token as a solid button fill dropped white button text below WCAG contrast in dark mode.
 
 ## Local development
 
