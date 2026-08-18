@@ -42,9 +42,22 @@
             content="https://www.karlhorning.dev/tv-tracker-extension/assets/social-share.png"
         />
         <link
+            rel="preload"
+            as="style"
+            href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+        />
+        <link
             href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap"
             rel="stylesheet"
+            media="print"
+            onload="this.media='all'"
         />
+        <noscript>
+            <link
+                href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+                rel="stylesheet"
+            />
+        </noscript>
         <link rel="stylesheet" href="assets/styles.css" />
     </head>
     <body>
@@ -95,11 +108,11 @@
                 <div class="screenshot-frame">
                     <picture>
                         <source
-                            srcset="assets/popup-screenshot-dark.png"
+                            srcset="assets/popup-screenshot-dark.webp"
                             media="(prefers-color-scheme: dark)"
                         />
                         <img
-                            src="assets/popup-screenshot.png"
+                            src="assets/popup-screenshot.webp"
                             alt="The TV Tracker popup, showing shows grouped into Aired recently and Coming up sections"
                             width="760"
                             height="1200"
@@ -247,19 +260,37 @@
                     <a href="#">
                         <picture>
                             <source srcset="assets/chrome-dark.svg" media="(prefers-color-scheme: dark)" />
-                            <img class="store-badge" src="assets/chrome.svg" alt="Available for Google Chrome" />
+                            <img
+                                class="store-badge"
+                                src="assets/chrome.svg"
+                                alt="Available for Google Chrome"
+                                width="500"
+                                height="150"
+                            />
                         </picture>
                     </a>
                     <a href="#">
                         <picture>
                             <source srcset="assets/edge-dark.svg" media="(prefers-color-scheme: dark)" />
-                            <img class="store-badge" src="assets/edge.svg" alt="Available for Microsoft Edge" />
+                            <img
+                                class="store-badge"
+                                src="assets/edge.svg"
+                                alt="Available for Microsoft Edge"
+                                width="500"
+                                height="150"
+                            />
                         </picture>
                     </a>
                     <a href="#">
                         <picture>
                             <source srcset="assets/firefox-dark.svg" media="(prefers-color-scheme: dark)" />
-                            <img class="store-badge" src="assets/firefox.svg" alt="Available for Mozilla Firefox" />
+                            <img
+                                class="store-badge"
+                                src="assets/firefox.svg"
+                                alt="Available for Mozilla Firefox"
+                                width="500"
+                                height="150"
+                            />
                         </picture>
                     </a>
                 </div>
