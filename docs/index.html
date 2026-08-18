@@ -1,0 +1,571 @@
+<!-- TV Tracker extension landing page, served via GitHub Pages from /docs. -->
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>TV Tracker</title>
+        <meta
+            name="description"
+            content="A browser extension that groups your tracked TV shows by what's happening now — aired recently, coming up, on hiatus, or finished."
+        />
+        <link rel="canonical" href="https://karl-horning.github.io/tv-tracker-extension/" />
+        <meta name="theme-color" content="#22272e" />
+        <link rel="icon" href="assets/icon.png" />
+        <link rel="apple-touch-icon" href="assets/icon.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="TV Tracker" />
+        <meta
+            property="og:description"
+            content="A browser extension that groups your tracked TV shows by what's happening now — aired recently, coming up, on hiatus, or finished."
+        />
+        <meta property="og:url" content="https://karl-horning.github.io/tv-tracker-extension/" />
+        <meta
+            property="og:image"
+            content="https://karl-horning.github.io/tv-tracker-extension/assets/icon.png"
+        />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="TV Tracker" />
+        <meta
+            name="twitter:description"
+            content="A browser extension that groups your tracked TV shows by what's happening now — aired recently, coming up, on hiatus, or finished."
+        />
+        <meta
+            name="twitter:image"
+            content="https://karl-horning.github.io/tv-tracker-extension/assets/icon.png"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg: #fbfbfa;
+                --panel: #ffffff;
+                --ink: #1a1a1a;
+                --muted: #63666b;
+                --divider: #e4e4e2;
+                --blue: #2456c4;
+                --blue-bg: #e2eafa;
+
+                --fresh: #1f8f63;
+                --fresh-bg: #e3f0e9;
+                --upcoming: #b4740a;
+                --upcoming-bg: #f6ebd8;
+                --hiatus: #7a7e85;
+                --hiatus-bg: #eaeaea;
+                --ended: #b03b32;
+                --ended-bg: #f4e4e1;
+
+                /* Dark-theme dot colours, matching the real toolbar icon exactly
+                   (public/assets.svg) — used only against the dark hero below. */
+                --icon-fresh: #57ab5a;
+                --icon-upcoming: #e0a23f;
+                --icon-hiatus: #99a4b0;
+                --icon-ended: #e5534b;
+                --icon-bg: #22272e;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                font-family: "Atkinson Hyperlegible", Verdana, Tahoma, sans-serif;
+                background: var(--bg);
+                color: var(--ink);
+                line-height: 1.55;
+            }
+
+            a {
+                color: var(--blue);
+            }
+
+            a:hover {
+                color: #1c4499;
+            }
+
+            :focus-visible {
+                outline: 3px solid var(--blue);
+                outline-offset: 2px;
+            }
+
+            /* The default outline colour falls below 3:1 against the dark
+               hero background, so the hero uses the same accent blue as
+               the extension's own dark theme instead. */
+            .hero :focus-visible {
+                outline-color: #539bf5;
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                * {
+                    animation: none !important;
+                    transition: none !important;
+                }
+            }
+
+            .wrap {
+                max-width: 980px;
+                margin: 0 auto;
+                padding: 0 24px;
+            }
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 14px 24px;
+                border-radius: 10px;
+                font-weight: 700;
+                font-size: 16px;
+                text-decoration: none;
+                cursor: pointer;
+                border: none;
+                font-family: inherit;
+            }
+
+            .btn-primary {
+                background: var(--blue);
+                color: #fff;
+            }
+
+            .btn-primary:hover {
+                background: #1c4499;
+                color: #fff;
+            }
+
+            .btn-ghost {
+                background: #fff;
+                color: var(--ink);
+                border: 1.5px solid var(--divider);
+            }
+
+            .btn-ghost:hover {
+                border-color: var(--blue);
+                color: var(--blue);
+            }
+
+            .btn-dark {
+                background: #323942;
+                color: #ececea;
+            }
+
+            .btn-dark:hover {
+                background: #3a4249;
+                color: #ececea;
+            }
+
+            .dotmark {
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+                flex-shrink: 0;
+                margin-top: 5px;
+            }
+
+            /* === Hero =========================================================== */
+
+            .hero {
+                position: relative;
+                overflow: hidden;
+                background: var(--icon-bg);
+            }
+
+            .hero-pattern {
+                position: absolute;
+                top: -60px;
+                right: -60px;
+                display: grid;
+                grid-template-columns: repeat(6, 44px);
+                gap: 14px;
+                opacity: 0.9;
+                transform: rotate(8deg);
+            }
+
+            .hero-pattern div {
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+            }
+
+            .hero-inner {
+                max-width: 820px;
+                margin: 0 auto;
+                padding: 96px 24px 100px;
+                position: relative;
+                text-align: center;
+            }
+
+            .hero-badge {
+                width: 56px;
+                height: 56px;
+                margin-bottom: 24px;
+            }
+
+            .hero h1 {
+                color: #ececea;
+                font-size: 44px;
+                line-height: 1.15;
+                margin: 0 0 18px;
+                font-weight: 700;
+            }
+
+            .hero p {
+                color: #adbac7;
+                font-size: 19px;
+                margin: 0 0 36px;
+            }
+
+            .hero-actions {
+                display: flex;
+                gap: 14px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            /* === Screenshot ====================================================== */
+
+            .screenshot-wrap {
+                display: flex;
+                justify-content: center;
+                margin-top: -64px;
+                position: relative;
+                z-index: 2;
+            }
+
+            .screenshot-frame {
+                width: 340px;
+                border-radius: 16px;
+                box-shadow: 0 30px 70px rgba(20, 30, 50, 0.24);
+                overflow: hidden;
+                border: 1px solid var(--divider);
+                background: var(--panel);
+            }
+
+            .screenshot-frame img {
+                display: block;
+                width: 100%;
+                height: auto;
+            }
+
+            /* === Features ======================================================== */
+
+            .features {
+                padding: 72px 0 48px;
+            }
+
+            .features h2 {
+                font-size: 26px;
+                margin: 0 0 32px;
+                text-align: center;
+            }
+
+            .feature-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 22px 40px;
+                max-width: 820px;
+                margin: 0 auto;
+            }
+
+            .feature-item {
+                display: flex;
+                gap: 14px;
+            }
+
+            /* === Privacy / footer ================================================ */
+
+            .privacy {
+                padding: 32px 0;
+                border-top: 1px solid var(--divider);
+                text-align: center;
+            }
+
+            .privacy p {
+                font-size: 14.5px;
+                color: var(--muted);
+                margin: 0 auto;
+                max-width: 56ch;
+            }
+
+            .store {
+                padding: 16px 0 56px;
+                text-align: center;
+            }
+
+            .store-badge {
+                display: block;
+                width: 190px;
+                height: auto;
+                border-radius: 8px;
+                border: 1px solid var(--divider);
+                box-shadow: 0 2px 8px rgba(20, 30, 50, 0.08);
+            }
+
+            .store a:hover .store-badge {
+                opacity: 0.85;
+            }
+
+            footer {
+                max-width: 980px;
+                margin: 0 auto;
+                padding: 28px 24px 44px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 13.5px;
+                color: var(--muted);
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .footer-links {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .footer-links a {
+                display: inline-flex;
+                padding: 8px;
+                border-radius: 6px;
+                text-decoration: none;
+            }
+
+            .footer-icon {
+                width: 20px;
+                height: 20px;
+            }
+
+            @media (max-width: 640px) {
+                .hero h1 {
+                    font-size: 32px;
+                }
+                .hero p {
+                    font-size: 17px;
+                }
+                .feature-grid {
+                    grid-template-columns: 1fr;
+                }
+                .hero-pattern {
+                    display: none;
+                }
+                footer {
+                    flex-direction: column;
+                    text-align: center;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+        <!-- ── Hero ─────────────────────────────────────────────── -->
+        <div class="hero">
+            <div class="hero-pattern" aria-hidden="true">
+                <div style="background: var(--icon-fresh)"></div>
+                <div style="background: var(--icon-upcoming)"></div>
+                <div style="background: #3a4048"></div>
+                <div style="background: var(--icon-hiatus)"></div>
+                <div style="background: #3a4048"></div>
+                <div style="background: var(--icon-ended)"></div>
+                <div style="background: var(--icon-upcoming)"></div>
+                <div style="background: #3a4048"></div>
+                <div style="background: var(--icon-fresh)"></div>
+                <div style="background: #3a4048"></div>
+                <div style="background: var(--icon-ended)"></div>
+                <div style="background: var(--icon-hiatus)"></div>
+            </div>
+            <div class="hero-inner">
+                <img
+                    class="hero-badge"
+                    src="assets/icon.png"
+                    alt=""
+                    width="56"
+                    height="56"
+                />
+                <h1>TV Tracker</h1>
+                <p>
+                    A browser extension that groups your shows by what's
+                    happening right now — aired recently, coming up, on
+                    hiatus, or finished. Add a show once and TV Tracker keeps
+                    it up to date.
+                </p>
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="#store">Add to Chrome</a>
+                    <a class="btn btn-dark" href="#store"
+                        >Also for Edge &amp; Firefox</a
+                    >
+                </div>
+            </div>
+        </div>
+
+        <div class="wrap">
+            <!-- ── Screenshot ───────────────────────────────────── -->
+            <div class="screenshot-wrap">
+                <div class="screenshot-frame">
+                    <img
+                        src="assets/popup-screenshot.png"
+                        alt="The TV Tracker popup, showing shows grouped into Aired recently and Coming up sections"
+                    />
+                </div>
+            </div>
+
+            <!-- ── Features ─────────────────────────────────────── -->
+            <div class="features">
+                <h2>Features</h2>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="dotmark" style="background: var(--fresh)"></div>
+                        <div>
+                            <strong>Status Board</strong> — shows are grouped
+                            into Aired recently, Coming up, On hiatus, and No
+                            upcoming episode.
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div
+                            class="dotmark"
+                            style="background: var(--upcoming)"
+                        ></div>
+                        <div>
+                            <strong>Search</strong> — search the TVmaze
+                            database to add shows by title.
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div
+                            class="dotmark"
+                            style="background: var(--hiatus)"
+                        ></div>
+                        <div>
+                            <strong>Sort</strong> — order your list by title
+                            or air date, ascending or descending.
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="dotmark" style="background: var(--ended)"></div>
+                        <div>
+                            <strong>Import and export</strong> — back up your
+                            list to a JSON file, or restore it on another
+                            browser.
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="dotmark" style="background: var(--blue)"></div>
+                        <div>
+                            <strong>Background refresh</strong> — show data
+                            updates automatically every four hours.
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="dotmark" style="background: #3a4048"></div>
+                        <div>
+                            <strong>Light and dark mode</strong> — matches
+                            your system, or choose one yourself.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Privacy ──────────────────────────────────────── -->
+            <div class="privacy">
+                <p>
+                    No accounts, no tracking. TV Tracker only talks to the
+                    TVmaze API to fetch show data — your list stays in your
+                    browser.
+                    <a
+                        href="https://github.com/Karl-Horning/tv-tracker-extension"
+                        >Read the source on GitHub</a
+                    >.
+                </p>
+            </div>
+
+            <!-- ── Store links ──────────────────────────────────── -->
+            <div class="store" id="store">
+                <h2 style="font-size: 24px; margin: 0 0 24px">
+                    Get TV Tracker
+                </h2>
+                <div
+                    style="
+                        display: flex;
+                        gap: 16px;
+                        justify-content: center;
+                        flex-wrap: wrap;
+                    "
+                >
+                    <a href="#"
+                        ><img
+                            class="store-badge"
+                            src="assets/chrome.svg"
+                            alt="Available for Google Chrome"
+                    /></a>
+                    <a href="#"
+                        ><img
+                            class="store-badge"
+                            src="assets/edge.svg"
+                            alt="Available for Microsoft Edge"
+                    /></a>
+                    <a href="#"
+                        ><img
+                            class="store-badge"
+                            src="assets/firefox.svg"
+                            alt="Available for Mozilla Firefox"
+                    /></a>
+                </div>
+            </div>
+        </div>
+        </main>
+
+        <!-- ── Footer ───────────────────────────────────────── -->
+        <footer>
+            <div>Released under the MIT License.</div>
+            <div class="footer-links">
+                <a href="https://www.karlhorning.dev/" aria-label="Karl Horning's personal site">
+                    <svg class="footer-icon" viewBox="140 140 800 800" aria-hidden="true">
+                        <g transform="matrix(1,0,0,1,-1130,0)">
+                            <g transform="matrix(1.003359,0,0,1.003359,813.880519,471.39168)">
+                                <path
+                                    fill="currentColor"
+                                    d="M1209.753,364.379L1221.753,384.379L1177.753,384.379L1178.753,385.379C1179.42,386.045 1179.92,387.379 1180.253,389.379C1180.586,391.379 1181.086,393.045 1181.753,394.379L1178.753,394.379L1178.753,396.379C1178.753,399.045 1178.42,401.379 1177.753,403.379C1177.086,405.379 1176.086,407.379 1174.753,409.379L1187.753,409.379C1186.42,411.379 1184.753,413.045 1182.753,414.379L1124.753,414.379C1121.42,417.045 1117.086,418.379 1111.753,418.379L883.753,418.379C879.753,418.379 876.086,417.879 872.753,416.879C869.42,415.879 866.42,415.045 863.753,414.379L921.753,414.379C919.753,413.712 916.753,412.045 912.753,409.379L899.753,409.379C896.42,406.712 893.92,404.045 892.253,401.379C890.586,398.712 889.086,396.712 887.753,395.379L886.753,394.379L889.753,394.379L884.753,384.379L927.753,384.379L916.753,364.379L1006.753,364.379L1003.753,359.379L925.753,359.379L924.753,357.379L924.753,359.379L768.753,359.379L768.753,364.379L872.753,364.379L872.753,384.379L808.753,384.379L808.753,394.379L711.753,394.379C711.753,397.045 711.086,399.712 709.753,402.379C708.42,405.045 707.086,407.379 705.753,409.379L696.753,409.379C694.086,412.045 692.086,413.712 690.753,414.379L625.753,414.379C622.42,417.045 617.753,418.379 611.753,418.379L420.753,418.379C414.753,418.379 410.086,417.045 406.753,414.379L470.753,414.379C469.42,413.712 467.42,412.045 464.753,409.379L473.753,409.379C472.42,407.379 471.086,405.045 469.753,402.379C468.42,399.712 467.753,397.045 467.753,394.379L563.753,394.379L563.753,384.379L627.753,384.379L627.753,364.379L523.753,364.379L523.753,359.379L679.753,359.379L679.753,344.379L488.753,344.379L488.753,329.379L506.753,329.379L506.753,309.379L522.753,309.379L522.753,299.379L519.753,299.379L519.753,279.379L517.753,279.379L517.753,259.379L509.753,259.379L509.753,244.379L515.753,244.379L515.753,234.379L526.753,234.379L526.753,214.379L562.753,214.379L562.753,199.379L435.753,199.379L435.753,189.379L426.753,189.379L426.753,184.379L540.753,184.379L540.753,174.379L550.753,174.379L550.753,169.379L420.753,169.379L420.753,154.379L437.753,154.379L437.753,144.379L443.753,144.379L443.753,124.379L541.753,124.379L541.753,114.379L568.753,114.379L568.753,99.379L442.753,99.379L442.753,79.379L476.753,79.379L476.753,64.379L520.753,64.379L520.753,59.379L587.753,59.379L587.753,49.379L622.753,49.379L622.753,34.379L629.753,34.379L629.753,29.379L608.753,29.379L608.753,14.379L541.753,14.379L541.753,9.379L494.753,9.379L494.753,-10.621L681.753,-10.621L681.753,-20.621L451.753,-20.621L451.753,-30.621L624.753,-30.621L624.753,-45.621L457.753,-45.621L457.753,-55.621L522.753,-55.621L522.753,-65.621L584.753,-65.621L584.753,-85.621L564.753,-85.621L564.753,-100.621L570.753,-100.621L570.753,-115.621L541.753,-115.621L541.753,-120.621L520.753,-120.621L520.753,-135.621L514.753,-135.621L514.753,-140.621L527.753,-140.621L527.753,-150.621L540.753,-150.621L540.753,-170.621L430.753,-170.621L430.753,-175.621L436.753,-175.621L436.753,-180.621L477.753,-180.621L477.753,-185.621L463.753,-185.621L463.753,-190.621L540.753,-190.621L540.753,-195.621L521.753,-195.621L521.753,-200.621L520.753,-200.621L520.753,-220.621L525.753,-220.621L525.753,-230.621L594.753,-230.621L594.753,-240.621L603.753,-240.621L603.753,-250.621L607.753,-250.621L607.753,-255.621L500.753,-255.621C501.42,-262.955 504.753,-269.621 510.753,-275.621L521.753,-275.621C525.753,-279.621 531.42,-281.621 538.753,-281.621L729.753,-281.621C736.42,-281.621 742.086,-279.621 746.753,-275.621L735.753,-275.621C742.42,-270.288 745.753,-263.621 745.753,-255.621L852.753,-255.621L852.753,-250.621L848.753,-250.621L848.753,-240.621L839.753,-240.621L839.753,-230.621L770.753,-230.621L770.753,-220.621L765.753,-220.621L765.753,-200.621L766.753,-200.621L766.753,-195.621L785.753,-195.621L785.753,-190.621L708.753,-190.621L708.753,-185.621L722.753,-185.621L722.753,-180.621L681.753,-180.621L681.753,-175.621L675.753,-175.621L675.753,-170.621L769.753,-170.621L772.753,-175.621L804.753,-175.621L806.753,-180.621L864.753,-180.621L867.753,-185.621L809.753,-185.621L812.753,-190.621L829.753,-190.621L832.753,-195.621L837.753,-195.621L840.753,-200.621L849.753,-200.621L851.753,-205.621L862.753,-205.621L870.753,-220.621L865.753,-220.621L871.753,-230.621L928.753,-230.621L933.753,-240.621L887.753,-240.621L892.753,-250.621L942.753,-250.621L944.753,-255.621L876.753,-255.621L878.753,-259.621C882.086,-266.288 887.086,-271.621 893.753,-275.621L885.753,-275.621C891.753,-279.621 899.753,-281.621 909.753,-281.621L1130.753,-281.621C1136.753,-281.621 1141.753,-279.621 1145.753,-275.621L1154.753,-275.621C1159.42,-270.955 1161.753,-265.621 1161.753,-259.621C1161.753,-257.621 1161.42,-256.288 1160.753,-255.621L1229.753,-255.621C1229.753,-254.955 1229.586,-254.288 1229.253,-253.621C1228.92,-252.955 1228.753,-251.955 1228.753,-250.621L1179.753,-250.621L1177.753,-248.621L1173.753,-240.621L1219.753,-240.621L1213.753,-230.621L1156.753,-230.621L1150.753,-220.621L1155.753,-220.621L1146.753,-205.621L1136.753,-205.621L1133.753,-200.621L1124.753,-200.621L1121.753,-195.621L1116.753,-195.621L1113.753,-190.621L1095.753,-190.621L1092.753,-185.621L1151.753,-185.621L1148.753,-180.621L1090.753,-180.621L1087.753,-175.621L1055.753,-175.621L1052.753,-170.621L1058.753,-170.621L1047.753,-150.621L1087.753,-150.621L1081.753,-140.621L1090.753,-140.621L1087.753,-135.621L1088.753,-135.621L1079.753,-120.621L1093.753,-120.621L1090.753,-115.621L1091.753,-115.621L1082.753,-100.621L1062.753,-100.621L1053.753,-85.621L1074.753,-85.621L1062.753,-65.621L1051.753,-65.621L1045.753,-55.621L980.753,-55.621L974.753,-45.621L1141.753,-45.621L1132.753,-30.621L959.753,-30.621L953.753,-20.621L1183.753,-20.621L1177.753,-10.621L990.753,-10.621L978.753,9.379L1025.753,9.379L1022.753,14.379L1089.753,14.379L1080.753,29.379L1101.753,29.379L1098.753,34.379L1091.753,34.379L1082.753,49.379L1047.753,49.379L1045.753,53.379L1049.753,59.379L982.753,59.379L985.753,64.379L941.753,64.379L950.753,79.379L915.753,79.379L927.753,99.379L1053.753,99.379L1062.753,114.379L1035.753,114.379L1041.753,124.379L943.753,124.379L955.753,144.379L949.753,144.379L955.753,154.379L938.753,154.379L947.753,169.379L1077.753,169.379L1080.753,174.379L1069.753,174.379L1075.753,184.379L1047.753,184.379L1050.753,189.379L1040.753,189.379L1046.753,199.379L972.753,199.379L981.753,214.379L1067.753,214.379L1079.753,234.379L1077.753,234.379L1083.753,244.379L1091.753,244.379L1100.753,259.379L1118.753,259.379L1130.753,279.379L1112.753,279.379L1124.753,299.379L1125.753,299.379L1130.753,309.379L1132.753,309.379L1144.753,329.379L1150.753,329.379L1159.753,344.379L1209.753,344.379L1218.753,359.379L1296.753,359.379L1299.753,364.379L1209.753,364.379ZM765.753,-120.621L786.753,-120.621L786.753,-115.621L809.753,-115.621L812.753,-120.621L798.753,-120.621L806.753,-135.621L805.753,-135.621L808.753,-140.621L799.753,-140.621L804.753,-150.621L772.753,-150.621L772.753,-140.621L759.753,-140.621L759.753,-135.621L765.753,-135.621L765.753,-120.621ZM772.753,-65.621L767.753,-65.621L767.753,-56.621L772.753,-65.621ZM785.753,184.379L788.753,184.379L785.753,177.379L785.753,184.379ZM671.753,189.379L680.753,189.379L680.753,199.379L759.753,199.379L753.753,189.379L763.753,189.379L760.753,184.379L671.753,184.379L671.753,189.379ZM733.753,344.379L867.753,344.379L859.753,329.379L852.753,329.379L841.753,309.379L839.753,309.379L834.753,299.379L833.753,299.379L822.753,279.379L840.753,279.379L829.753,259.379L811.753,259.379L802.753,244.379L794.753,244.379L789.753,234.379L791.753,234.379L779.753,214.379L771.753,214.379L771.753,234.379L760.753,234.379L760.753,244.379L754.753,244.379L754.753,259.379L762.753,259.379L762.753,279.379L764.753,279.379L764.753,299.379L767.753,299.379L767.753,309.379L751.753,309.379L751.753,329.379L733.753,329.379L733.753,344.379Z"
+                                />
+                            </g>
+                        </g>
+                    </svg>
+                </a>
+                <a href="https://www.linkedin.com/in/karl-horning/" aria-label="LinkedIn">
+                    <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                    <svg class="footer-icon" viewBox="0 0 640 640" aria-hidden="true">
+                        <path
+                            fill="currentColor"
+                            d="M160 96C124.7 96 96 124.7 96 160L96 480C96 515.3 124.7 544 160 544L480 544C515.3 544 544 515.3 544 480L544 160C544 124.7 515.3 96 480 96L160 96zM165 266.2L231.5 266.2L231.5 480L165 480L165 266.2zM236.7 198.5C236.7 219.8 219.5 237 198.2 237C176.9 237 159.7 219.8 159.7 198.5C159.7 177.2 176.9 160 198.2 160C219.5 160 236.7 177.2 236.7 198.5zM413.9 480L413.9 376C413.9 351.2 413.4 319.3 379.4 319.3C344.8 319.3 339.5 346.3 339.5 374.2L339.5 480L273.1 480L273.1 266.2L336.8 266.2L336.8 295.4L337.7 295.4C346.6 278.6 368.3 260.9 400.6 260.9C467.8 260.9 480.3 305.2 480.3 362.8L480.3 480L413.9 480z"
+                        />
+                    </svg>
+                </a>
+                <a href="https://github.com/Karl-Horning/tv-tracker-extension" aria-label="GitHub">
+                    <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                    <svg class="footer-icon" viewBox="0 0 640 640" aria-hidden="true">
+                        <path
+                            fill="currentColor"
+                            d="M280.5 426.5C214.5 418.5 168 371 168 309.5C168 284.5 177 257.5 192 239.5C185.5 223 186.5 188 194 173.5C214 171 241 181.5 257 196C276 190 296 187 320.5 187C345 187 365 190 383 195.5C398.5 181.5 426 171 446 173.5C453 187 454 222 447.5 239C463.5 258 472 283.5 472 309.5C472 371 425.5 417.5 358.5 426C375.5 437 387 461 387 488.5L387 540.5C387 555.5 399.5 564 414.5 558C505 523.5 576 433 576 321C576 179.5 461 64 319.5 64C178 64 64 179.5 64 321C64 432 134.5 524 229.5 558.5C243 563.5 256 554.5 256 541L256 501C249 504 240 506 232 506C199 506 179.5 488 165.5 454.5C160 441 154 433 142.5 431.5C136.5 431 134.5 428.5 134.5 425.5C134.5 419.5 144.5 415 154.5 415C169 415 181.5 424 194.5 442.5C204.5 457 215 463.5 227.5 463.5C240 463.5 248 459 259.5 447.5C268 439 274.5 431.5 280.5 426.5z"
+                        />
+                    </svg>
+                </a>
+                <a href="https://ko-fi.com/karlhorning" aria-label="Ko-fi">
+                    <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                    <svg class="footer-icon" viewBox="0 0 640 640" aria-hidden="true">
+                        <path
+                            fill="currentColor"
+                            d="M313.8 139C403.6 139 426.8 140.1 460.1 143.4C538.2 151.2 583.7 199.4 583.7 268.6L583.7 277.5C583.7 341.8 536.6 394.4 472.9 399.9C467.9 416.5 460.1 433.1 449.6 449.8C425.2 487.5 376.5 535.1 286.7 535.1L269 535.1C195.9 535.1 139.3 503.5 105.5 445.9C75.6 395.5 71.7 339.5 71.7 264.7C71.7 191 116.1 151.1 168.1 144.5C207.4 139.5 256.2 139 313.8 139zM313.8 180.6C253.4 180.6 210.2 181.1 177.5 186.1C131.5 192.8 113.2 218.8 113.2 265.3L113.4 291C114.6 348.3 120.5 388.1 140.9 425.5C167.5 474.8 215.7 493.7 270.6 493.7L287.8 493.7C359.8 493.7 394.8 458.8 414.1 428.3C423.5 412.8 431.8 395.6 436.3 374L439.6 360.2L459.5 360.2C503.8 360.2 542.1 324.2 542.1 278.2L542.1 269.9C542.1 218.4 509.9 191.2 454 184.6C422.4 181.8 403.6 180.7 313.8 180.7zM331 233.2C369.2 233.2 395.8 264.8 395.8 300.2C395.8 332.9 377.5 361.2 353.7 383.3C338.7 398.3 314.4 413.8 297.8 423.8C293.4 426.6 287.8 428.2 281.1 428.2C275.6 428.2 270.6 426.5 265.6 423.8C249 413.8 224.6 398.3 209.1 383.3C187.3 362.5 169.9 336.4 167.8 306.3L167.6 300.2C167.6 264.7 193.1 233.2 231.9 233.2C254.6 233.2 270.7 244.8 281.2 260.9C292.8 244.8 308.4 233.2 331.1 233.2zM453.5 229.3C481.8 229.3 497.3 245.9 497.3 272.5C497.3 299.1 481.8 315.2 453.5 315.2C444.6 315.2 439.7 310.2 439.7 303.5L439.7 240.9C439.7 234.2 444.7 229.3 453.5 229.3z"
+                        />
+                    </svg>
+                </a>
+            </div>
+        </footer>
+    </body>
+</html>
