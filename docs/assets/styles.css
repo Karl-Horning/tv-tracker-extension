@@ -34,8 +34,7 @@
     --icon-bg: #22272e;
 }
 
-/* Own palette, not inverted light-mode values. --bg sits below the
-   hero/footer tone, --panel sits above both, for real depth. */
+/* --bg sits below the hero/footer tone; --panel sits above both. */
 @media (prefers-color-scheme: dark) {
     :root {
         --bg: #1c2128;
@@ -46,18 +45,18 @@
         --divider: #444c56;
         --blue: #539bf5;
         --blue-hover: #6cb0ff;
-        --blue-bg: rgba(83, 155, 245, 0.16);
+        --blue-bg: rgba(83, 155, 245, 0.1);
 
         --fresh: #57ab5a;
-        --fresh-bg: rgba(87, 171, 90, 0.16);
+        --fresh-bg: rgba(87, 171, 90, 0.1);
         --upcoming: #e0a23f;
-        --upcoming-bg: rgba(224, 162, 63, 0.16);
+        --upcoming-bg: rgba(224, 162, 63, 0.1);
         --hiatus: #99a4b0;
-        --hiatus-bg: rgba(153, 164, 176, 0.16);
+        --hiatus-bg: rgba(153, 164, 176, 0.1);
         --ended: #e5534b;
-        --ended-bg: rgba(229, 83, 75, 0.16);
+        --ended-bg: rgba(229, 83, 75, 0.1);
         --accent2: #b39ddb;
-        --accent2-bg: rgba(179, 157, 219, 0.16);
+        --accent2-bg: rgba(179, 157, 219, 0.1);
 
         --shadow: rgba(0, 0, 0, 0.24);
         --shadow-strong: rgba(0, 0, 0, 0.45);
@@ -123,13 +122,14 @@ a:hover {
     font-family: inherit;
 }
 
+/* Fixed colours, not --blue: that token lightens in dark mode. */
 .btn-primary {
-    background: var(--blue);
+    background: #2456c4;
     color: #fff;
 }
 
 .btn-primary:hover {
-    background: var(--blue-hover);
+    background: #1c4499;
     color: #fff;
 }
 
@@ -226,6 +226,7 @@ a:hover {
 
 .screenshot-frame {
     width: 340px;
+    max-width: 100%;
     border-radius: 16px;
     box-shadow: 0 30px 70px var(--shadow-strong);
     overflow: hidden;
