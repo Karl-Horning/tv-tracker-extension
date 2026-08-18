@@ -2,6 +2,8 @@
 
 A Chrome extension for tracking TV shows. See when each show last aired and when it is next on.
 
+[Website](https://www.karlhorning.dev/tv-tracker-extension/) · [Privacy Policy](https://www.karlhorning.dev/tv-tracker-extension/privacy.html)
+
 ## Features
 
 - **Status Board** — shows are grouped into four sections: Aired recently, Coming up, On hiatus, and No upcoming episode. A show can appear in more than one section at the same time.
