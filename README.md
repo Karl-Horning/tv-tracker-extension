@@ -1,8 +1,14 @@
 # TV Tracker
 
-A Chrome extension for tracking TV shows. See when each show last aired and when it is next on.
+A browser extension for tracking TV shows. See when each show last aired and when it is next on.
 
-[Website](https://www.karlhorning.dev/tv-tracker-extension/) · [Privacy Policy](https://www.karlhorning.dev/tv-tracker-extension/privacy.html)
+[Website](https://www.karlhorning.dev/tv-tracker-extension/) · [Privacy Policy](https://www.karlhorning.dev/tv-tracker-extension/privacy.html) · [Support me on Ko-fi](https://ko-fi.com/karlhorning)
+
+## Screenshots and demo
+
+![The TV Tracker popup, showing shows grouped into Aired recently and Coming up sections](store-assets/screenshot-01-main.png)
+
+[![Available for Microsoft Edge](docs/assets/edge.svg)](https://microsoftedge.microsoft.com/addons/detail/tv-tracker/mdeanpnjihfdlpfmoepfjfbkdkdkcpjf)
 
 ## Features
 
@@ -72,6 +78,12 @@ Firefox removes temporary add-ons on restart, so you'll need to reload it each s
 ## Feedback and issues
 
 Found a bug or have a suggestion? [Open an issue](https://github.com/Karl-Horning/tv-tracker-extension/issues).
+
+## Design
+
+Source design files are in `design/` and were created in [Affinity](https://www.affinity.studio/graphic-design-software).
+
+Built with [Claude](https://claude.ai) as an AI coding assistant. Architecture, decisions, and testing are mine; implementation was AI-assisted throughout.
 
 ## License
 
