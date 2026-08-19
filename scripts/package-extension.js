@@ -63,7 +63,10 @@ const firefoxManifest = {
         scripts: [baseManifest.background.service_worker],
     },
     browser_specific_settings: {
-        gecko: { id: "tv-tracker@karlhorning.dev" },
+        gecko: {
+            id: "tv-tracker@karlhorning.dev",
+            data_collection_permissions: { required: ["none"] },
+        },
     },
 };
 
