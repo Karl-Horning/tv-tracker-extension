@@ -1,4 +1,4 @@
-/** @fileoverview Zips dist/ into a Chrome Web Store submission package. */
+/** @fileoverview Zips dist/ into store submission packages for each browser. */
 
 import { createWriteStream, existsSync, mkdirSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -18,24 +18,54 @@ if (!existsSync(distDir)) {
 const pkg = JSON.parse(
     await readFile(resolve(rootDir, "package.json"), "utf-8"),
 );
-const outputName = `tv-tracker-extension-v${pkg.version}.zip`;
+const baseManifest = JSON.parse(
+    await readFile(resolve(distDir, "manifest.json"), "utf-8"),
+);
 
 mkdirSync(releaseDir, { recursive: true });
 
-const outputPath = resolve(releaseDir, outputName);
-const output = createWriteStream(outputPath);
-const archive = new ZipArchive({ zlib: { level: 9 } });
+/**
+ * Zips dist/ into a store package using the given manifest.
+ *
+ * @param {string} suffix - Appended to the output filename, for example "-firefox".
+ * @param {object} manifest - The manifest.json content to package.
+ * @returns {Promise<void>}
+ */
+function writePackage(suffix, manifest) {
+    const outputName = `tv-tracker-extension-v${pkg.version}${suffix}.zip`;
+    const outputPath = resolve(releaseDir, outputName);
+    const output = createWriteStream(outputPath);
+    const archive = new ZipArchive({ zlib: { level: 9 } });
 
-output.on("close", () => {
-    console.log(`Wrote release/${outputName} (${archive.pointer()} bytes).`);
-});
-archive.on("warning", (err) => {
-    throw err;
-});
-archive.on("error", (err) => {
-    throw err;
-});
+    return new Promise((resolvePromise, reject) => {
+        output.on("close", () => {
+            console.log(
+                `Wrote release/${outputName} (${archive.pointer()} bytes).`,
+            );
+            resolvePromise();
+        });
+        archive.on("warning", reject);
+        archive.on("error", reject);
 
-archive.pipe(output);
-archive.glob("**/*", { cwd: distDir });
-await archive.finalize();
+        archive.pipe(output);
+        archive.glob("**/*", { cwd: distDir, ignore: ["manifest.json"] });
+        archive.append(JSON.stringify(manifest, null, 2), {
+            name: "manifest.json",
+        });
+        archive.finalize();
+    });
+}
+
+const firefoxManifest = {
+    ...baseManifest,
+    background: {
+        ...baseManifest.background,
+        scripts: [baseManifest.background.service_worker],
+    },
+    browser_specific_settings: {
+        gecko: { id: "tv-tracker@karlhorning.dev" },
+    },
+};
+
+await writePackage("", baseManifest);
+await writePackage("-firefox", firefoxManifest);

@@ -52,13 +52,14 @@ Then load the extension in Chrome:
 
 ## Scripts
 
-| Command               | Description                       |
-| --------------------- | --------------------------------- |
-| `npm run build`       | Type-check and compile to `dist/` |
-| `npm run dev`         | Start the Vite dev server         |
-| `npm run lint`        | Lint the whole project            |
-| `npm test`            | Run all tests once                |
-| `npm run test:watch`  | Run tests in watch mode           |
+| Command              | Description                                                                       |
+| -------------------- | --------------------------------------------------------------------------------- |
+| `npm run build`      | Type-check and compile to `dist/`                                                 |
+| `npm run dev`        | Start the Vite dev server                                                         |
+| `npm run lint`       | Lint the whole project                                                            |
+| `npm run package`    | Build and zip store submission packages into `release/` (Chrome/Edge and Firefox) |
+| `npm test`           | Run all tests once                                                                |
+| `npm run test:watch` | Run tests in watch mode                                                           |
 
 ## Feedback and issues
 
