@@ -374,7 +374,7 @@ a:hover {
 .store-coming-soon {
     color: var(--muted);
     font-size: 15px;
-    margin: 0;
+    margin: 0 0 24px;
 }
 
 .store-badge {
