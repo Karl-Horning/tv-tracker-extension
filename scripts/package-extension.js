@@ -1,5 +1,6 @@
 /** @fileoverview Zips dist/ into store submission packages for each browser. */
 
+import { execFileSync } from "node:child_process";
 import { createWriteStream, existsSync, mkdirSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
@@ -63,9 +64,20 @@ const firefoxManifest = {
         scripts: [baseManifest.background.service_worker],
     },
     browser_specific_settings: {
-        gecko: { id: "tv-tracker@karlhorning.dev" },
+        gecko: {
+            id: "tv-tracker@karlhorning.dev",
+            data_collection_permissions: { required: ["none"] },
+        },
     },
 };
 
 await writePackage("", baseManifest);
 await writePackage("-firefox", firefoxManifest);
+
+const sourceOutputName = `tv-tracker-extension-v${pkg.version}-source.zip`;
+execFileSync(
+    "git",
+    ["archive", "--format=zip", "-o", resolve(releaseDir, sourceOutputName), "HEAD"],
+    { cwd: rootDir },
+);
+console.log(`Wrote release/${sourceOutputName}.`);

@@ -116,7 +116,7 @@ function openSearch(): void {
     $sections.hidden = true;
     $appFooter.hidden = true;
     $searchInput.value = "";
-    $searchResults.innerHTML = "";
+    $searchResults.replaceChildren();
     $searchInput.focus();
 }
 
@@ -140,7 +140,7 @@ $searchInput.addEventListener("input", () => {
     clearTimeout(searchTimer);
     const query = $searchInput.value.trim();
     if (!query) {
-        $searchResults.innerHTML = "";
+        $searchResults.replaceChildren();
         return;
     }
     searchTimer = setTimeout(() => void runSearch(query), 300);
