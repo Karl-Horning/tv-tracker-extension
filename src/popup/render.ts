@@ -11,13 +11,13 @@ import { classifyShow, type ShowGroup, type SortOrder } from "../filter/classify
 // ── SVG icon strings ─────────────────────────────────────────────────
 
 const SVG_CHECK =
-    `<svg viewBox="0 0 20 20" aria-hidden="true">` +
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true">` +
     `<path d="M4 10l4 4 8-8" fill="none" stroke="currentColor" ` +
     `stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>` +
     `</svg>`;
 
 const SVG_CALENDAR =
-    `<svg viewBox="0 0 20 20" aria-hidden="true">` +
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true">` +
     `<rect x="3" y="4" width="14" height="13" rx="2" fill="none" ` +
     `stroke="currentColor" stroke-width="1.6"/>` +
     `<path d="M3 8h14M6.5 2.5v3M13.5 2.5v3" stroke="currentColor" ` +
@@ -25,19 +25,19 @@ const SVG_CALENDAR =
     `</svg>`;
 
 const SVG_PAUSE =
-    `<svg viewBox="0 0 20 20" aria-hidden="true">` +
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true">` +
     `<rect x="5" y="3" width="3.2" height="14" rx="1" fill="currentColor"/>` +
     `<rect x="11.8" y="3" width="3.2" height="14" rx="1" fill="currentColor"/>` +
     `</svg>`;
 
 const SVG_FLAG =
-    `<svg viewBox="0 0 20 20" aria-hidden="true">` +
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true">` +
     `<path d="M5 2v16M5 3h9l-2.5 3L14 9H5" fill="none" ` +
     `stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>` +
     `</svg>`;
 
 const SVG_TRASH =
-    `<svg viewBox="0 0 20 20" aria-hidden="true">` +
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true">` +
     `<path d="M4 6h12M8 6V4h4v2M6 6l.7 10a1 1 0 001 .9h4.6a1 1 0 001-.9L14 6" ` +
     `fill="none" stroke="currentColor" stroke-width="1.6" ` +
     `stroke-linecap="round" stroke-linejoin="round"/>` +
@@ -58,6 +58,17 @@ const SECTION_DEFS: Array<{ group: ShowGroup; label: string }> = [
     { group: "hiatus", label: "On hiatus" },
     { group: "ended", label: "No upcoming episode" },
 ];
+
+/**
+ * Parses SVG markup into a live SVG element.
+ *
+ * @param markup - Well-formed SVG markup, for example "<svg>...</svg>".
+ * @returns The parsed root SVG element.
+ */
+function parseSvg(markup: string): SVGSVGElement {
+    const doc = new DOMParser().parseFromString(markup, "image/svg+xml");
+    return doc.documentElement as unknown as SVGSVGElement;
+}
 
 // ── Public API ────────────────────────────────────────────────────────
 
@@ -115,7 +126,7 @@ export function renderSearchResults(
     container: HTMLElement,
     results: TvmazeSearchResult[],
 ): void {
-    container.innerHTML = "";
+    container.replaceChildren();
 
     if (results.length === 0) {
         const li = document.createElement("li");
@@ -209,10 +220,22 @@ function buildSection(
 
     const head = document.createElement("div");
     head.className = "section-head";
-    head.innerHTML =
-        `<span class="section-indicator" aria-hidden="true"></span>` +
-        `<h2 class="section-label" id="${headingId}">${label}</h2>` +
-        `<span class="section-count" aria-hidden="true">${shows.length}</span>`;
+
+    const indicator = document.createElement("span");
+    indicator.className = "section-indicator";
+    indicator.setAttribute("aria-hidden", "true");
+
+    const heading = document.createElement("h2");
+    heading.className = "section-label";
+    heading.id = headingId;
+    heading.textContent = label;
+
+    const count = document.createElement("span");
+    count.className = "section-count";
+    count.setAttribute("aria-hidden", "true");
+    count.textContent = String(shows.length);
+
+    head.append(indicator, heading, count);
 
     const body = document.createElement("ul");
     body.className = "section-body";
@@ -246,7 +269,7 @@ function buildShowRow(show: TvmazeShow, group: ShowGroup): HTMLLIElement {
 
     const epPara = document.createElement("p");
     epPara.className = `show-ep${muted ? " show-ep--muted" : ""}`;
-    epPara.innerHTML = GROUP_ICON[group];
+    epPara.append(parseSvg(GROUP_ICON[group]));
 
     const epText = document.createElement("span");
     epText.textContent = buildEpisodeText(show, group);
@@ -260,7 +283,7 @@ function buildShowRow(show: TvmazeShow, group: ShowGroup): HTMLLIElement {
     removeBtn.setAttribute("aria-label", `Remove ${show.name}`);
     removeBtn.dataset.showId = String(show.id);
     removeBtn.dataset.showName = show.name;
-    removeBtn.innerHTML = SVG_TRASH;
+    removeBtn.append(parseSvg(SVG_TRASH));
 
     li.append(infoDiv, removeBtn);
     return li;
