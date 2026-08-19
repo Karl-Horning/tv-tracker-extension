@@ -83,7 +83,7 @@ Found a bug or have a suggestion? [Open an issue](https://github.com/Karl-Hornin
 
 Source design files are in `design/` and were created in [Affinity](https://www.affinity.studio/graphic-design-software).
 
-Built with [Claude](https://claude.ai) as an AI coding assistant. Architecture, decisions, and testing are mine; implementation was AI-assisted throughout.
+Built with [Claude](https://claude.ai) as an AI coding assistant. Architecture, decisions, testing, and the writing voice throughout are mine.
 
 ## License
 
