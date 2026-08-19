@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "TV Tracker",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Track when your favourite TV shows last aired and when they're on next.",
   "permissions": [
     "storage",

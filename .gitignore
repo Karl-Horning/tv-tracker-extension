@@ -17,6 +17,7 @@
 # production
 /build
 /dist
+/release
 *.zip
 
 # misc

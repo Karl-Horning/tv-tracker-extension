@@ -1,18 +1,21 @@
 {
   "name": "tv-tracker-extension",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json && tsc -p tsconfig.docs.json && vite build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "package": "npm run build && node scripts/package-extension.js"
   },
   "devDependencies": {
+    "@types/archiver": "^8.0.0",
     "@types/chrome": "^0.2.0",
     "@types/node": "^26.0.1",
+    "archiver": "^8.0.0",
     "axe-core": "^4.12.1",
     "eslint": "^9.39.5",
     "globals": "^17.11.0",
