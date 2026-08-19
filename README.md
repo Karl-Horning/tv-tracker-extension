@@ -31,9 +31,9 @@ A Chrome extension for tracking TV shows. See when each show last aired and when
 - **Every colour pair meets WCAG AA contrast minimums** — 4.5:1 for text, 3:1 for interactive boundaries like borders and buttons, in both the light and dark themes.
 - **Dark mode is calibrated, not inverted from light mode** — background and text tones avoid the glare of a near-black/near-white pairing, the same principle already used in light mode.
 - **Settings live in a native `<details>` menu** — fully keyboard-operable with Tab, Enter, and Escape.
-- **The landing page (`docs/`) stays plain HTML and CSS, not React** — GitHub Pages serves `docs/` with no build step, and `docs/index.test.ts` reads `index.html` directly for its accessibility check, which a templating layer would need a build step to satisfy. `index.html` and `privacy.html` share one `docs/assets/styles.css`; the footer markup is still duplicated between the two, accepted as the cost of not introducing a build step.
 - **The landing page hero's buttons use fixed colours, not the shared `--blue` token** — `--blue` is intentionally lighter in dark mode for text and link legibility, but the hero background stays dark regardless of page theme. Reusing the token as a solid button fill dropped white button text below WCAG contrast in dark mode.
-- **ESLint uses typescript-eslint's type-checked rules, not just syntax rules** — this caught several async event listeners passed directly to `addEventListener`/`setTimeout` (a real unhandled-rejection risk, not a style nit), and required a `tsconfig.docs.json` so `docs/*.test.ts` — previously outside every tsconfig and never type-checked by `npm run build` — has a project to resolve against.
+- **ESLint uses typescript-eslint's type-checked rules, not just syntax rules** — it caught several async event listeners passed directly to `addEventListener`/`setTimeout`, a real unhandled-rejection risk rather than a style nit. It also required adding `tsconfig.docs.json`, since `docs/*.test.ts` sat outside every tsconfig and was never type-checked by `npm run build`.
+- **Import runs in its own window, not a hidden file input inside the popup** — Firefox closes the popup the instant a file input opens inside it, so importing there silently did nothing. A separate window avoids that bug. It also keeps the import experience identical across every browser, rather than treating Firefox as a special case.
 
 ## Local development
 
@@ -49,6 +49,14 @@ Then load the extension in Chrome:
 1. Go to `chrome://extensions`
 2. Enable **Developer mode**
 3. Click **Load unpacked** and select the `dist/` folder
+
+Or in Firefox:
+
+1. Go to `about:debugging#/runtime/this-firefox`
+2. Click **Load Temporary Add-on…**
+3. Select `dist/manifest.json`
+
+Firefox removes temporary add-ons on restart, so you'll need to reload it each session.
 
 ## Scripts
 
