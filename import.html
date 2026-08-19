@@ -1,0 +1,45 @@
+<!-- Standalone import page for the TV Tracker extension. -->
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Import backup — TV Tracker</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body class="import-body">
+        <div id="app" class="import-page">
+            <header class="app-header">
+                <h1 class="app-title">Import backup</h1>
+            </header>
+            <main class="import-main">
+                <p>Choose a TV Tracker backup file (.json) to import.</p>
+                <input
+                    type="file"
+                    id="file-input"
+                    class="visually-hidden"
+                    accept="application/json"
+                />
+                <label for="file-input" class="btn btn-primary">
+                    Choose file
+                </label>
+                <p id="status" class="import-status" role="status" aria-live="polite"></p>
+                <button
+                    type="button"
+                    class="btn btn-ghost"
+                    id="btn-close"
+                    hidden
+                >
+                    Close
+                </button>
+            </main>
+        </div>
+
+        <script type="module" src="/src/import/main.ts"></script>
+    </body>
+</html>

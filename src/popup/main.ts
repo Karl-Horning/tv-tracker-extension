@@ -7,7 +7,7 @@
  */
 
 import "./style.css";
-import { buildBackup, importBackup, parseBackup } from "../backup/backup";
+import { buildBackup } from "../backup/backup";
 import { fetchShow, searchShows } from "../api/tvmaze";
 import { refreshAllShows } from "../background/refresh";
 import type { SortOrder } from "../filter/classify";
@@ -60,9 +60,6 @@ const $sortSelect = document.getElementById(
 const $btnRefresh = document.getElementById("btn-refresh") as HTMLButtonElement;
 const $btnExport = document.getElementById("btn-export") as HTMLButtonElement;
 const $btnImport = document.getElementById("btn-import") as HTMLButtonElement;
-const $importFile = document.getElementById(
-    "import-file",
-) as HTMLInputElement;
 const $lastUpdated = document.getElementById("last-updated") as HTMLElement;
 
 // ── State ─────────────────────────────────────────────────────────────
@@ -287,35 +284,19 @@ async function handleExportClick(): Promise<void> {
     closeSettingsMenu();
 }
 
-$btnImport.addEventListener("click", () => $importFile.click());
+$btnImport.addEventListener("click", () => {
+    void chrome.windows.create({
+        url: chrome.runtime.getURL("import.html"),
+        type: "popup",
+        width: 420,
+        height: 420,
+    });
+    closeSettingsMenu();
+});
 
-$importFile.addEventListener("change", () => void handleImportFileChange());
-
-/** Reads the chosen backup file and imports its shows. */
-async function handleImportFileChange(): Promise<void> {
-    const file = $importFile.files?.[0];
-    $importFile.value = "";
-    if (!file) return;
-
-    try {
-        const backup = parseBackup(await file.text());
-        const result = await importBackup(backup);
-        await loadAndRender();
-        window.alert(
-            `Imported ${result.imported} show${result.imported === 1 ? "" : "s"}.` +
-                (result.failed > 0
-                    ? ` ${result.failed} could not be imported.`
-                    : ""),
-        );
-    } catch (err) {
-        console.error("Failed to import backup:", err);
-        window.alert(
-            err instanceof Error ? err.message : "Failed to import backup.",
-        );
-    } finally {
-        closeSettingsMenu();
-    }
-}
+chrome.storage.onChanged.addListener((_changes, areaName) => {
+    if (areaName === "local") void loadAndRender();
+});
 
 // ── Init ──────────────────────────────────────────────────────────────
 

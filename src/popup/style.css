@@ -633,3 +633,22 @@ body[data-theme="dark"] .theme-icon-moon {
     clip: rect(0 0 0 0);
     white-space: nowrap;
 }
+
+/* === Import page ==================================================== */
+
+.import-body {
+    width: auto;
+}
+
+.import-main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px;
+}
+
+.import-status {
+    margin: 0;
+    font-size: 0.9375rem;
+}
