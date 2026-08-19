@@ -371,6 +371,12 @@ a:hover {
     text-align: center;
 }
 
+.store-coming-soon {
+    color: var(--muted);
+    font-size: 15px;
+    margin: 0;
+}
+
 .store-badge {
     display: block;
     width: 190px;
