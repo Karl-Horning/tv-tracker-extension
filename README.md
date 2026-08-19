@@ -8,7 +8,7 @@ A browser extension for tracking TV shows. See when each show last aired and whe
 
 ![The TV Tracker popup, showing shows grouped into Aired recently and Coming up sections](store-assets/screenshot-01-main.png)
 
-[![Available for Microsoft Edge](docs/assets/edge.svg)](https://microsoftedge.microsoft.com/addons/detail/tv-tracker/mdeanpnjihfdlpfmoepfjfbkdkdkcpjf)
+<a href="https://microsoftedge.microsoft.com/addons/detail/tv-tracker/mdeanpnjihfdlpfmoepfjfbkdkdkcpjf"><img src="docs/assets/edge.svg" alt="Available for Microsoft Edge" width="190"></a>
 
 ## Features
 
