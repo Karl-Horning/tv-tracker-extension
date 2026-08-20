@@ -73,6 +73,17 @@ describe("classifyShow", () => {
         expect(classifyShow(show, NOW)).not.toContain("fresh");
     });
 
+    it("respects a custom fresh window shorter than the default", () => {
+        const show = makeShow({ prevAirdate: "2026-06-20" });
+        expect(classifyShow(show, NOW, 7)).not.toContain("fresh");
+    });
+
+    it("respects a custom fresh window longer than the default", () => {
+        const show = makeShow({ prevAirdate: "2026-05-02" });
+        expect(classifyShow(show, NOW)).not.toContain("fresh");
+        expect(classifyShow(show, NOW, 90)).toContain("fresh");
+    });
+
     // ── upcoming ───────────────────────────────────────────────────────
 
     it("is upcoming when a next episode is scheduled", () => {

@@ -1,16 +1,20 @@
 /**
  * @fileoverview Unit tests for the toolbar badge logic.
  *
- * getCachedShows is replaced with vi.mock so no real storage calls are made.
- * chrome.action is stubbed per-test so setBadgeText calls can be asserted.
+ * getCachedShows and getFreshWindowDays are replaced with vi.mock so no
+ * real storage calls are made. chrome.action is stubbed per-test so
+ * setBadgeText calls can be asserted.
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { TvmazeShow } from "../api/tvmaze";
-import { getCachedShows } from "../storage/shows";
+import { getCachedShows, getFreshWindowDays } from "../storage/shows";
 import { countFreshShows, updateBadge } from "./badge";
 
-vi.mock("../storage/shows", () => ({ getCachedShows: vi.fn() }));
+vi.mock("../storage/shows", () => ({
+    getCachedShows: vi.fn(),
+    getFreshWindowDays: vi.fn(),
+}));
 
 const NOW = new Date("2026-07-01T00:00:00.000Z");
 
@@ -68,6 +72,7 @@ describe("updateBadge", () => {
     beforeEach(() => {
         mockSetBadgeText = vi.fn();
         vi.stubGlobal("chrome", { action: { setBadgeText: mockSetBadgeText } });
+        vi.mocked(getFreshWindowDays).mockResolvedValue(30);
     });
 
     afterEach(() => {
@@ -85,5 +90,12 @@ describe("updateBadge", () => {
         vi.mocked(getCachedShows).mockResolvedValue([STALE_SHOW]);
         await updateBadge(NOW);
         expect(mockSetBadgeText).toHaveBeenCalledWith({ text: "" });
+    });
+
+    it("uses the user's stored fresh window instead of the default", async () => {
+        vi.mocked(getCachedShows).mockResolvedValue([STALE_SHOW]);
+        vi.mocked(getFreshWindowDays).mockResolvedValue(90);
+        await updateBadge(NOW);
+        expect(mockSetBadgeText).toHaveBeenCalledWith({ text: "1" });
     });
 });

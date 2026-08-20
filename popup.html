@@ -33,7 +33,7 @@
                 <details class="settings-menu" id="settings-menu">
                     <summary
                         class="btn-settings"
-                        aria-label="Settings: appearance, sort, refresh, export, import"
+                        aria-label="Settings: appearance, sort, fresh window, refresh, export, import"
                     >
                         <!--!Font Awesome Free v5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
                         <svg viewBox="0 0 512 512" aria-hidden="true">
@@ -86,7 +86,7 @@
                         <hr />
                         <p class="group-label" id="sort-label">Sort by</p>
                         <select
-                            class="sort-select"
+                            class="settings-select"
                             id="sort-select"
                             aria-labelledby="sort-label"
                         >
@@ -98,6 +98,21 @@
                             <option value="airdate-desc">
                                 Air date (latest first)
                             </option>
+                        </select>
+                        <hr />
+                        <p class="group-label" id="fresh-window-label">
+                            Recently aired within
+                        </p>
+                        <select
+                            class="settings-select"
+                            id="fresh-window-select"
+                            aria-labelledby="fresh-window-label"
+                        >
+                            <option value="7">7 days</option>
+                            <option value="14">14 days</option>
+                            <option value="30">30 days</option>
+                            <option value="60">60 days</option>
+                            <option value="90">90 days</option>
                         </select>
                         <hr />
                         <button
