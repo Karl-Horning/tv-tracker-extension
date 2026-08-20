@@ -243,7 +243,8 @@ a:hover {
 /* === Features ============================================================ */
 
 .features {
-    padding: 80px 0 56px;
+    padding: 96px 0;
+    background: var(--bg);
 }
 
 .features h2 {
@@ -295,8 +296,8 @@ a:hover {
 /* === FAQ ==================================================================== */
 
 .faq {
-    padding: 72px 0 64px;
-    border-top: 1px solid var(--divider);
+    padding: 96px 0;
+    background: var(--panel);
 }
 
 .faq h2 {
@@ -328,8 +329,8 @@ a:hover {
 /* === Privacy & permissions =============================================== */
 
 .privacy {
-    padding: 72px 0 64px;
-    border-top: 1px solid var(--divider);
+    padding: 96px 0;
+    background: var(--bg);
     text-align: center;
 }
 
@@ -400,7 +401,8 @@ a:hover {
 }
 
 .store {
-    padding: 16px 0 56px;
+    padding: 96px 0;
+    background: var(--panel);
     text-align: center;
 }
 
