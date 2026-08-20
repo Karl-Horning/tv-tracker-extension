@@ -13,8 +13,8 @@
         <meta name="color-scheme" content="light dark" />
         <meta name="theme-color" content="#fbfbfa" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#22272e" media="(prefers-color-scheme: dark)" />
-        <link rel="icon" href="assets/icon.png" />
-        <link rel="apple-touch-icon" href="assets/icon.png" />
+        <link rel="icon" href="assets/icons/icon.png" />
+        <link rel="apple-touch-icon" href="assets/icons/icon.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
@@ -27,7 +27,7 @@
         <meta property="og:url" content="https://www.karlhorning.dev/tv-tracker-extension/" />
         <meta
             property="og:image"
-            content="https://www.karlhorning.dev/tv-tracker-extension/assets/social-share.png"
+            content="https://www.karlhorning.dev/tv-tracker-extension/assets/images/social-share.png"
         />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -39,7 +39,7 @@
         />
         <meta
             name="twitter:image"
-            content="https://www.karlhorning.dev/tv-tracker-extension/assets/social-share.png"
+            content="https://www.karlhorning.dev/tv-tracker-extension/assets/images/social-share.png"
         />
         <script type="application/ld+json">
         {
@@ -48,7 +48,7 @@
             "name": "TV Tracker",
             "description": "A browser extension that groups your tracked TV shows by what's happening now — aired recently, coming up, on hiatus, or finished.",
             "url": "https://www.karlhorning.dev/tv-tracker-extension/",
-            "image": "https://www.karlhorning.dev/tv-tracker-extension/assets/social-share.png",
+            "image": "https://www.karlhorning.dev/tv-tracker-extension/assets/images/social-share.png",
             "applicationCategory": "BrowserApplication",
             "operatingSystem": "Chrome, Edge, Firefox",
             "offers": {
@@ -85,10 +85,17 @@
                 rel="stylesheet"
             />
         </noscript>
-        <link rel="stylesheet" href="assets/styles.css" />
+        <link rel="stylesheet" href="assets/css/styles.css" />
     </head>
     <body>
         <a class="skip-link" href="#main">Skip to content</a>
+        <header class="sticky-cta" id="sticky-cta">
+            <span class="sticky-cta-brand">
+                <img src="assets/icons/icon.png" alt="" width="22" height="22" />
+                TV Tracker
+            </span>
+            <a class="btn btn-primary" href="#store">Get TV Tracker</a>
+        </header>
         <main id="main">
         <!-- ── Hero ─────────────────────────────────────────────── -->
         <div class="hero">
@@ -109,7 +116,7 @@
             <div class="hero-inner">
                 <img
                     class="hero-badge"
-                    src="assets/icon.png"
+                    src="assets/icons/icon.png"
                     alt=""
                     width="56"
                     height="56"
@@ -133,11 +140,11 @@
                 <div class="screenshot-frame">
                     <picture>
                         <source
-                            srcset="assets/popup-screenshot-dark.webp"
+                            srcset="assets/images/popup-screenshot-dark.webp"
                             media="(prefers-color-scheme: dark)"
                         />
                         <img
-                            src="assets/popup-screenshot.webp"
+                            src="assets/images/popup-screenshot.webp"
                             alt="The TV Tracker popup, showing shows grouped into Aired recently and Coming up sections"
                             width="680"
                             height="1074"
@@ -378,10 +385,10 @@
                 >
                     <a href="https://chromewebstore.google.com/detail/tv-tracker/pfadihbpjelibobconkadcpfljgjpelp">
                         <picture>
-                            <source srcset="assets/chrome-dark.svg" media="(prefers-color-scheme: dark)" />
+                            <source srcset="assets/store-badges/chrome-dark.svg" media="(prefers-color-scheme: dark)" />
                             <img
                                 class="store-badge"
-                                src="assets/chrome.svg"
+                                src="assets/store-badges/chrome.svg"
                                 alt="Available for Google Chrome"
                                 width="500"
                                 height="150"
@@ -390,10 +397,10 @@
                     </a>
                     <a href="https://microsoftedge.microsoft.com/addons/detail/tv-tracker/mdeanpnjihfdlpfmoepfjfbkdkdkcpjf">
                         <picture>
-                            <source srcset="assets/edge-dark.svg" media="(prefers-color-scheme: dark)" />
+                            <source srcset="assets/store-badges/edge-dark.svg" media="(prefers-color-scheme: dark)" />
                             <img
                                 class="store-badge"
-                                src="assets/edge.svg"
+                                src="assets/store-badges/edge.svg"
                                 alt="Available for Microsoft Edge"
                                 width="500"
                                 height="150"
@@ -403,10 +410,10 @@
                     <!--
                     <a href="#">
                         <picture>
-                            <source srcset="assets/firefox-dark.svg" media="(prefers-color-scheme: dark)" />
+                            <source srcset="assets/store-badges/firefox-dark.svg" media="(prefers-color-scheme: dark)" />
                             <img
                                 class="store-badge"
-                                src="assets/firefox.svg"
+                                src="assets/store-badges/firefox.svg"
                                 alt="Available for Mozilla Firefox"
                                 width="500"
                                 height="150"
@@ -423,7 +430,7 @@
         <footer>
             <div class="wrap footer-inner">
                 <div class="footer-brand">
-                    <img src="assets/icon.png" alt="" width="20" height="20" />
+                    <img src="assets/icons/icon.png" alt="" width="20" height="20" />
                     <div>
                         <strong>TV Tracker</strong>
                         <div class="footer-meta">© 2026 Karl Horning. Released under the MIT License.</div>
@@ -431,7 +438,7 @@
                 </div>
                 <div class="footer-links">
                     <a href="https://www.karlhorning.dev/" aria-label="Karl Horning's personal site">
-                        <img class="footer-icon" src="assets/icon-karlhorning.svg" alt="" width="20" height="20" />
+                        <img class="footer-icon" src="assets/icons/icon-karlhorning.svg" alt="" width="20" height="20" />
                     </a>
                     <a href="https://www.linkedin.com/in/karl-horning/" aria-label="LinkedIn">
                         <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
@@ -463,6 +470,7 @@
                 </div>
             </div>
         </footer>
-        <script src="assets/copyright.js"></script>
+        <script type="module" src="assets/js/copyright.js"></script>
+        <script type="module" src="assets/js/sticky-cta.js"></script>
     </body>
 </html>
