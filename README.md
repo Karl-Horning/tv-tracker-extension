@@ -72,6 +72,7 @@ Firefox removes temporary add-ons on restart, so you'll need to reload it each s
 | -------------------- | --------------------------------------------------------------------------------- |
 | `npm run build`      | Type-check and compile to `dist/`                                                 |
 | `npm run dev`        | Start the Vite dev server                                                         |
+| `npm run docs:serve` | Serve the docs page locally over HTTP (needed for ES module scripts to load)      |
 | `npm run lint`       | Lint the whole project                                                            |
 | `npm run package`    | Build and zip store submission packages into `release/` (Chrome/Edge and Firefox) |
 | `npm test`           | Run all tests once                                                                |
