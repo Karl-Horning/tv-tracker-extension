@@ -292,6 +292,39 @@ a:hover {
     font-size: 15px;
 }
 
+/* === FAQ ==================================================================== */
+
+.faq {
+    padding: 72px 0 64px;
+    border-top: 1px solid var(--divider);
+}
+
+.faq h2 {
+    font-size: 26px;
+    margin: 0 0 32px;
+    text-align: center;
+}
+
+.faq-item {
+    max-width: 640px;
+    margin: 0 auto 28px;
+}
+
+.faq-item:last-child {
+    margin-bottom: 0;
+}
+
+.faq-item h3 {
+    font-size: 16px;
+    margin: 0 0 8px;
+}
+
+.faq-item p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+}
+
 /* === Privacy & permissions =============================================== */
 
 .privacy {

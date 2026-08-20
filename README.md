@@ -41,6 +41,7 @@ A browser extension for tracking TV shows. See when each show last aired and whe
 - **The landing page hero's buttons use fixed colours, not the shared `--blue` token** — `--blue` is intentionally lighter in dark mode for text and link legibility, but the hero background stays dark regardless of page theme. Reusing the token as a solid button fill dropped white button text below WCAG contrast in dark mode.
 - **ESLint uses typescript-eslint's type-checked rules, not just syntax rules** — it caught several async event listeners passed directly to `addEventListener`/`setTimeout`, a real unhandled-rejection risk rather than a style nit. It also required adding `tsconfig.docs.json`, since `docs/*.test.ts` sat outside every tsconfig and was never type-checked by `npm run build`.
 - **Import runs in its own window, not a hidden file input inside the popup** — Firefox closes the popup the instant a file input opens inside it, so importing there silently did nothing. A separate window avoids that bug. It also keeps the import experience identical across every browser, rather than treating Firefox as a special case.
+- **No "mark as watched" feature** — TV Tracker is a TV guide, not a watch-tracking checklist. It tells you what aired and what's coming up; keeping track of what you've actually seen is a different job.
 
 ## Local development
 
