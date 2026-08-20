@@ -264,7 +264,17 @@ function buildShowRow(show: TvmazeShow, group: ShowGroup): HTMLLIElement {
 
     const namePara = document.createElement("p");
     namePara.className = "show-name";
-    namePara.textContent = show.name;
+    if (show.url) {
+        const link = document.createElement("a");
+        link.className = "show-name-link";
+        link.href = show.url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = show.name;
+        namePara.append(link);
+    } else {
+        namePara.textContent = show.name;
+    }
 
     const epPara = document.createElement("p");
     epPara.className = `show-ep${muted ? " show-ep--muted" : ""}`;

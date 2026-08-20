@@ -33,6 +33,8 @@ export interface TvmazeShow {
     webChannel?: { name: string } | null;
     /** Poster artwork, or null when TVmaze has none for this show. */
     image?: { medium: string; original: string } | null;
+    /** Link to the show's page on TVmaze.com. */
+    url?: string;
     _embedded: {
         previousepisode?: TvmazeEpisode;
         nextepisode?: TvmazeEpisode;

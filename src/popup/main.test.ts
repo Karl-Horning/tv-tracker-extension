@@ -22,6 +22,7 @@ const SHOW_FRESH_AND_UPCOMING: TvmazeShow = {
     name: "The Simpsons",
     status: "Running",
     network: { name: "FOX" },
+    url: "https://www.tvmaze.com/shows/83/the-simpsons",
     _embedded: {
         previousepisode: {
             id: 1,
@@ -202,6 +203,24 @@ describe("renderStatusBoard", () => {
         renderStatusBoard(el, [SHOW_FRESH_AND_UPCOMING], NOW);
         const epText = el.querySelector(".show-ep span")?.textContent;
         expect(epText).toContain("FOX");
+    });
+
+    it("links the show name to its TVmaze page when a url is available", () => {
+        const el = document.createElement("div");
+        renderStatusBoard(el, [SHOW_FRESH_AND_UPCOMING], NOW);
+        const link = el.querySelector<HTMLAnchorElement>(".show-name-link");
+        expect(link?.href).toBe("https://www.tvmaze.com/shows/83/the-simpsons");
+        expect(link?.target).toBe("_blank");
+        expect(link?.rel).toBe("noopener noreferrer");
+        expect(link?.textContent).toBe("The Simpsons");
+    });
+
+    it("renders the show name as plain text when there's no url", () => {
+        const el = document.createElement("div");
+        renderStatusBoard(el, [SHOW_UPCOMING_ONLY], NOW);
+        const nameEl = el.querySelector(".show-name");
+        expect(nameEl?.querySelector("a")).toBeNull();
+        expect(nameEl?.textContent).toBe("American Dad!");
     });
 
     it("renders the show's poster as the row thumbnail when available", () => {
