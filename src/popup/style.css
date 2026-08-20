@@ -10,6 +10,24 @@
  * only typeface used, in both the light and dark palettes below.
  */
 
+/* === Fonts ========================================================== */
+
+@font-face {
+    font-family: "Atkinson Hyperlegible";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("./fonts/atkinson-hyperlegible-400.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Atkinson Hyperlegible";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("./fonts/atkinson-hyperlegible-700.woff2") format("woff2");
+}
+
 /* === Custom properties ============================================ */
 
 /*
