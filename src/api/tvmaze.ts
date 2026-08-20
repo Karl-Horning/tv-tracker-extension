@@ -31,6 +31,8 @@ export interface TvmazeShow {
     network?: { name: string } | null;
     /** Streaming service, or null for broadcast shows. */
     webChannel?: { name: string } | null;
+    /** Poster artwork, or null when TVmaze has none for this show. */
+    image?: { medium: string; original: string } | null;
     _embedded: {
         previousepisode?: TvmazeEpisode;
         nextepisode?: TvmazeEpisode;

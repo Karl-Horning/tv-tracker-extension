@@ -268,7 +268,6 @@ function buildShowRow(show: TvmazeShow, group: ShowGroup): HTMLLIElement {
 
     const epPara = document.createElement("p");
     epPara.className = `show-ep${muted ? " show-ep--muted" : ""}`;
-    epPara.append(parseSvg(GROUP_ICON[group]));
     epPara.append(buildEpisodeLines(show, group));
 
     infoDiv.append(namePara, epPara);
@@ -281,8 +280,34 @@ function buildShowRow(show: TvmazeShow, group: ShowGroup): HTMLLIElement {
     removeBtn.dataset.showName = show.name;
     removeBtn.append(parseSvg(SVG_TRASH));
 
-    li.append(infoDiv, removeBtn);
+    li.append(buildThumbnail(show, group), infoDiv, removeBtn);
     return li;
+}
+
+/**
+ * Builds the leading thumbnail for a show row.
+ *
+ * Uses the show's TVmaze poster when available. Falls back to the group's
+ * status icon, in the same slot, when the show has no image.
+ *
+ * @param show - The show to build a thumbnail for.
+ * @param group - The group context, used to pick the fallback icon.
+ * @returns An img or icon element sized for the row's thumbnail slot.
+ */
+function buildThumbnail(show: TvmazeShow, group: ShowGroup): HTMLElement {
+    if (show.image?.medium) {
+        const img = document.createElement("img");
+        img.className = "show-thumb";
+        img.src = show.image.medium;
+        img.alt = "";
+        img.loading = "lazy";
+        return img;
+    }
+
+    const fallback = document.createElement("span");
+    fallback.className = "show-thumb show-thumb--icon";
+    fallback.append(parseSvg(GROUP_ICON[group]));
+    return fallback;
 }
 
 /** One show row's episode text, split into separately styleable lines. */

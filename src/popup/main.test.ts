@@ -204,6 +204,35 @@ describe("renderStatusBoard", () => {
         expect(epText).toContain("FOX");
     });
 
+    it("renders the show's poster as the row thumbnail when available", () => {
+        const showWithImage: TvmazeShow = {
+            ...SHOW_FRESH_AND_UPCOMING,
+            image: { medium: "https://static.tvmaze.com/uploads/images/medium_portrait/1.jpg", original: "https://static.tvmaze.com/uploads/images/original/1.jpg" },
+        };
+        const el = document.createElement("div");
+        renderStatusBoard(el, [showWithImage], NOW);
+        const thumb = el.querySelector<HTMLImageElement>(".show-thumb");
+        expect(thumb?.tagName).toBe("IMG");
+        expect(thumb?.src).toBe("https://static.tvmaze.com/uploads/images/medium_portrait/1.jpg");
+        expect(thumb?.alt).toBe("");
+    });
+
+    it("falls back to the group icon when the show has no poster", () => {
+        const el = document.createElement("div");
+        renderStatusBoard(el, [SHOW_FRESH_AND_UPCOMING], NOW);
+        const thumb = el.querySelector(".show-thumb");
+        expect(thumb?.tagName).toBe("SPAN");
+        expect(thumb?.querySelector("svg")).not.toBeNull();
+    });
+
+    it("falls back to the group icon when the show's image is explicitly null", () => {
+        const showNoImage: TvmazeShow = { ...SHOW_FRESH_AND_UPCOMING, image: null };
+        const el = document.createElement("div");
+        renderStatusBoard(el, [showNoImage], NOW);
+        const thumb = el.querySelector(".show-thumb");
+        expect(thumb?.tagName).toBe("SPAN");
+    });
+
     it("falls back to the streaming service when there's no broadcast network", () => {
         const streamingShow: TvmazeShow = {
             ...SHOW_FRESH_AND_UPCOMING,
