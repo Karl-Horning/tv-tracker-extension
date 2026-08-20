@@ -27,6 +27,14 @@ export interface TvmazeShow {
     id: number;
     name: string;
     status: "Running" | "Ended" | "To Be Determined" | "In Development";
+    /** Broadcast network, or null for streaming-only shows. */
+    network?: { name: string } | null;
+    /** Streaming service, or null for broadcast shows. */
+    webChannel?: { name: string } | null;
+    /** Poster artwork, or null when TVmaze has none for this show. */
+    image?: { medium: string; original: string } | null;
+    /** Link to the show's page on TVmaze.com. */
+    url?: string;
     _embedded: {
         previousepisode?: TvmazeEpisode;
         nextepisode?: TvmazeEpisode;
@@ -56,6 +64,21 @@ export interface TvmazeSearchShow {
     status: TvmazeShow["status"];
     /** Broadcast network, or null for streaming-only shows. */
     network: { name: string } | null;
+    /** Streaming service, or null for broadcast shows. */
+    webChannel: { name: string } | null;
+}
+
+/**
+ * Returns the display name of the network or streaming service a show airs on.
+ *
+ * @param show - A show or search result with network and webChannel fields.
+ * @returns The network or streaming service name, or "Streaming" if neither is known.
+ */
+export function getChannelName(show: {
+    network?: { name: string } | null;
+    webChannel?: { name: string } | null;
+}): string {
+    return show.network?.name ?? show.webChannel?.name ?? "Streaming";
 }
 
 /** A single entry from the TVmaze show search endpoint. */

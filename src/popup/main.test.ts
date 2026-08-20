@@ -21,6 +21,8 @@ const SHOW_FRESH_AND_UPCOMING: TvmazeShow = {
     id: 83,
     name: "The Simpsons",
     status: "Running",
+    network: { name: "FOX" },
+    url: "https://www.tvmaze.com/shows/83/the-simpsons",
     _embedded: {
         previousepisode: {
             id: 1,
@@ -196,6 +198,72 @@ describe("renderStatusBoard", () => {
         expect(epText).not.toContain("null");
     });
 
+    it("includes the broadcast network in the episode text", () => {
+        const el = document.createElement("div");
+        renderStatusBoard(el, [SHOW_FRESH_AND_UPCOMING], NOW);
+        const epText = el.querySelector(".show-ep span")?.textContent;
+        expect(epText).toContain("FOX");
+    });
+
+    it("links the show name to its TVmaze page when a url is available", () => {
+        const el = document.createElement("div");
+        renderStatusBoard(el, [SHOW_FRESH_AND_UPCOMING], NOW);
+        const link = el.querySelector<HTMLAnchorElement>(".show-name-link");
+        expect(link?.href).toBe("https://www.tvmaze.com/shows/83/the-simpsons");
+        expect(link?.target).toBe("_blank");
+        expect(link?.rel).toBe("noopener noreferrer");
+        expect(link?.textContent).toBe("The Simpsons");
+    });
+
+    it("renders the show name as plain text when there's no url", () => {
+        const el = document.createElement("div");
+        renderStatusBoard(el, [SHOW_UPCOMING_ONLY], NOW);
+        const nameEl = el.querySelector(".show-name");
+        expect(nameEl?.querySelector("a")).toBeNull();
+        expect(nameEl?.textContent).toBe("American Dad!");
+    });
+
+    it("renders the show's poster as the row thumbnail when available", () => {
+        const showWithImage: TvmazeShow = {
+            ...SHOW_FRESH_AND_UPCOMING,
+            image: { medium: "https://static.tvmaze.com/uploads/images/medium_portrait/1.jpg", original: "https://static.tvmaze.com/uploads/images/original/1.jpg" },
+        };
+        const el = document.createElement("div");
+        renderStatusBoard(el, [showWithImage], NOW);
+        const thumb = el.querySelector<HTMLImageElement>(".show-thumb");
+        expect(thumb?.tagName).toBe("IMG");
+        expect(thumb?.src).toBe("https://static.tvmaze.com/uploads/images/medium_portrait/1.jpg");
+        expect(thumb?.alt).toBe("");
+    });
+
+    it("falls back to the group icon when the show has no poster", () => {
+        const el = document.createElement("div");
+        renderStatusBoard(el, [SHOW_FRESH_AND_UPCOMING], NOW);
+        const thumb = el.querySelector(".show-thumb");
+        expect(thumb?.tagName).toBe("SPAN");
+        expect(thumb?.querySelector("svg")).not.toBeNull();
+    });
+
+    it("falls back to the group icon when the show's image is explicitly null", () => {
+        const showNoImage: TvmazeShow = { ...SHOW_FRESH_AND_UPCOMING, image: null };
+        const el = document.createElement("div");
+        renderStatusBoard(el, [showNoImage], NOW);
+        const thumb = el.querySelector(".show-thumb");
+        expect(thumb?.tagName).toBe("SPAN");
+    });
+
+    it("falls back to the streaming service when there's no broadcast network", () => {
+        const streamingShow: TvmazeShow = {
+            ...SHOW_FRESH_AND_UPCOMING,
+            network: null,
+            webChannel: { name: "Netflix" },
+        };
+        const el = document.createElement("div");
+        renderStatusBoard(el, [streamingShow], NOW);
+        const epText = el.querySelector(".show-ep span")?.textContent;
+        expect(epText).toContain("Netflix");
+    });
+
     it("sorts shows by title within a section by default", () => {
         const el = document.createElement("div");
         renderStatusBoard(el, [SHOW_FRESH_AND_UPCOMING, SHOW_UPCOMING_ONLY], NOW);
@@ -273,7 +341,7 @@ describe("renderSearchResults", () => {
     /** Creates a minimal TvmazeSearchResult fixture. */
     const makeResult = (id: number, name: string): TvmazeSearchResult => ({
         score: 1,
-        show: { id, name, status: "Running", network: { name: "FOX" } },
+        show: { id, name, status: "Running", network: { name: "FOX" }, webChannel: null },
     });
 
     it("renders one list item per result", () => {
