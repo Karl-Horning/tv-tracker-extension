@@ -21,6 +21,7 @@ const SHOW_FRESH_AND_UPCOMING: TvmazeShow = {
     id: 83,
     name: "The Simpsons",
     status: "Running",
+    network: { name: "FOX" },
     _embedded: {
         previousepisode: {
             id: 1,
@@ -196,6 +197,25 @@ describe("renderStatusBoard", () => {
         expect(epText).not.toContain("null");
     });
 
+    it("includes the broadcast network in the episode text", () => {
+        const el = document.createElement("div");
+        renderStatusBoard(el, [SHOW_FRESH_AND_UPCOMING], NOW);
+        const epText = el.querySelector(".show-ep span")?.textContent;
+        expect(epText).toContain("FOX");
+    });
+
+    it("falls back to the streaming service when there's no broadcast network", () => {
+        const streamingShow: TvmazeShow = {
+            ...SHOW_FRESH_AND_UPCOMING,
+            network: null,
+            webChannel: { name: "Netflix" },
+        };
+        const el = document.createElement("div");
+        renderStatusBoard(el, [streamingShow], NOW);
+        const epText = el.querySelector(".show-ep span")?.textContent;
+        expect(epText).toContain("Netflix");
+    });
+
     it("sorts shows by title within a section by default", () => {
         const el = document.createElement("div");
         renderStatusBoard(el, [SHOW_FRESH_AND_UPCOMING, SHOW_UPCOMING_ONLY], NOW);
@@ -273,7 +293,7 @@ describe("renderSearchResults", () => {
     /** Creates a minimal TvmazeSearchResult fixture. */
     const makeResult = (id: number, name: string): TvmazeSearchResult => ({
         score: 1,
-        show: { id, name, status: "Running", network: { name: "FOX" } },
+        show: { id, name, status: "Running", network: { name: "FOX" }, webChannel: null },
     });
 
     it("renders one list item per result", () => {

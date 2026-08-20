@@ -193,7 +193,7 @@ describe("renderSearchResults accessibility", () => {
 
     const makeResult = (id: number, name: string): TvmazeSearchResult => ({
         score: 1,
-        show: { id, name, status: "Running", network: { name: "FOX" } },
+        show: { id, name, status: "Running", network: { name: "FOX" }, webChannel: null },
     });
 
     it("has no violations with search results", async () => {

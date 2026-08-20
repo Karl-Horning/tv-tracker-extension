@@ -5,7 +5,7 @@
  * no module-level state.
  */
 
-import type { TvmazeSearchResult, TvmazeShow } from "../api/tvmaze";
+import { getChannelName, type TvmazeSearchResult, type TvmazeShow } from "../api/tvmaze";
 import { classifyShow, type ShowGroup, type SortOrder } from "../filter/classify";
 
 // ── SVG icon strings ─────────────────────────────────────────────────
@@ -151,8 +151,7 @@ export function renderSearchResults(
 
         const meta = document.createElement("span");
         meta.className = "search-result-meta";
-        const network = result.show.network?.name ?? "Streaming";
-        meta.textContent = `${network} · ${result.show.status}`;
+        meta.textContent = `${getChannelName(result.show)} · ${result.show.status}`;
 
         btn.append(name, meta);
         li.append(btn);
@@ -270,10 +269,7 @@ function buildShowRow(show: TvmazeShow, group: ShowGroup): HTMLLIElement {
     const epPara = document.createElement("p");
     epPara.className = `show-ep${muted ? " show-ep--muted" : ""}`;
     epPara.append(parseSvg(GROUP_ICON[group]));
-
-    const epText = document.createElement("span");
-    epText.textContent = buildEpisodeText(show, group);
-    epPara.append(epText);
+    epPara.append(buildEpisodeLines(show, group));
 
     infoDiv.append(namePara, epPara);
 
@@ -289,36 +285,106 @@ function buildShowRow(show: TvmazeShow, group: ShowGroup): HTMLLIElement {
     return li;
 }
 
+/** One show row's episode text, split into separately styleable lines. */
+interface EpisodeLines {
+    /** Zero-padded episode code, for example "S04E05". Null when there's no episode to show. */
+    code: string | null;
+    /** Episode name, or a fallback like "Recently aired" when there's no episode. */
+    title: string;
+    /** Air date, with any status note appended (for example "— renewal pending"). Null when there's no episode. */
+    date: string | null;
+}
+
 /**
- * Returns the episode description line for a show row.
+ * Builds the title, channel, and date lines for a show row.
+ *
+ * Split into separate lines — rather than one long sentence — so each
+ * piece of information can be scanned on its own rather than parsed out
+ * of a run-on string.
+ *
+ * @param show - The show to build episode lines for.
+ * @param group - Determines which episode (previous or next) is shown.
+ * @returns A span containing the title, channel, and date lines.
+ */
+function buildEpisodeLines(show: TvmazeShow, group: ShowGroup): HTMLSpanElement {
+    const lines = getEpisodeLines(show, group);
+
+    const wrap = document.createElement("span");
+    wrap.className = "show-ep-lines";
+
+    const titleLine = document.createElement("span");
+    titleLine.className = "show-ep-title";
+    if (lines.code) {
+        const codeSpan = document.createElement("span");
+        codeSpan.className = "show-ep-code";
+        codeSpan.textContent = lines.code;
+        titleLine.append(codeSpan, ` “${lines.title}”`);
+    } else {
+        titleLine.textContent = lines.title;
+    }
+    wrap.append(titleLine);
+
+    const channelLine = document.createElement("span");
+    channelLine.className = "show-ep-detail";
+    channelLine.textContent = getChannelName(show);
+    wrap.append(channelLine);
+
+    if (lines.date) {
+        const dateLine = document.createElement("span");
+        dateLine.className = "show-ep-detail";
+        dateLine.textContent = lines.date;
+        wrap.append(dateLine);
+    }
+
+    return wrap;
+}
+
+/**
+ * Returns the episode code, title, and date text for a show row.
  *
  * @param show - The show whose episode data to format.
  * @param group - Determines which episode (previous or next) is shown.
- * @returns A plain text description string.
+ * @returns The episode's code, title, and date as separate strings.
  */
-function buildEpisodeText(show: TvmazeShow, group: ShowGroup): string {
+function getEpisodeLines(show: TvmazeShow, group: ShowGroup): EpisodeLines {
     const { previousepisode: prev, nextepisode: next } = show._embedded;
 
     switch (group) {
         case "fresh":
             return prev
-                ? `${formatEpisodeCode(prev.season, prev.number)} “${prev.name}” — ${formatDate(prev.airdate)}`
-                : "Recently aired";
+                ? {
+                      code: formatEpisodeCode(prev.season, prev.number),
+                      title: prev.name,
+                      date: formatDate(prev.airdate),
+                  }
+                : { code: null, title: "Recently aired", date: null };
 
         case "upcoming":
             return next
-                ? `${formatEpisodeCode(next.season, next.number)} “${next.name}” — ${formatDate(next.airdate)}`
-                : "Coming soon";
+                ? {
+                      code: formatEpisodeCode(next.season, next.number),
+                      title: next.name,
+                      date: formatDate(next.airdate),
+                  }
+                : { code: null, title: "Coming soon", date: null };
 
         case "hiatus":
             return prev
-                ? `${formatEpisodeCode(prev.season, prev.number)} “${prev.name}” — last aired ${formatDate(prev.airdate)}${show.status === "To Be Determined" ? " — renewal pending" : ""}`
-                : "No episodes aired";
+                ? {
+                      code: formatEpisodeCode(prev.season, prev.number),
+                      title: prev.name,
+                      date: `Last aired ${formatDate(prev.airdate)}${show.status === "To Be Determined" ? " — renewal pending" : ""}`,
+                  }
+                : { code: null, title: "No episodes aired", date: null };
 
         case "ended":
             return prev
-                ? `${formatEpisodeCode(prev.season, prev.number)} “${prev.name}” — last aired ${formatDate(prev.airdate)} — series ended`
-                : "No episodes aired";
+                ? {
+                      code: formatEpisodeCode(prev.season, prev.number),
+                      title: prev.name,
+                      date: `Last aired ${formatDate(prev.airdate)} — series ended`,
+                  }
+                : { code: null, title: "No episodes aired", date: null };
     }
 }
 
