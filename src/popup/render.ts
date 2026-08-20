@@ -6,7 +6,12 @@
  */
 
 import { getChannelName, type TvmazeSearchResult, type TvmazeShow } from "../api/tvmaze";
-import { classifyShow, type ShowGroup, type SortOrder } from "../filter/classify";
+import {
+    classifyShow,
+    DEFAULT_FRESH_WINDOW_DAYS,
+    type ShowGroup,
+    type SortOrder,
+} from "../filter/classify";
 
 // ── SVG icon strings ─────────────────────────────────────────────────
 
@@ -83,12 +88,15 @@ function parseSvg(markup: string): SVGSVGElement {
  * @param shows - The list of tracked shows to classify and render.
  * @param now - Reference time for classification; defaults to the current time.
  * @param sortOrder - How to order shows within each section; defaults to title (A–Z).
+ * @param freshWindowDays - How many days back a previous episode still counts
+ *   as fresh; defaults to DEFAULT_FRESH_WINDOW_DAYS.
  */
 export function renderStatusBoard(
     container: HTMLElement,
     shows: TvmazeShow[],
     now: Date = new Date(),
     sortOrder: SortOrder = "title-asc",
+    freshWindowDays: number = DEFAULT_FRESH_WINDOW_DAYS,
 ): void {
     const groups: Record<ShowGroup, TvmazeShow[]> = {
         fresh: [],
@@ -98,7 +106,7 @@ export function renderStatusBoard(
     };
 
     for (const show of shows) {
-        for (const group of classifyShow(show, now)) {
+        for (const group of classifyShow(show, now, freshWindowDays)) {
             groups[group].push(show);
         }
     }

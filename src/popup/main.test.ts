@@ -319,6 +319,31 @@ describe("renderStatusBoard", () => {
         expect(names).toEqual(["American Dad!", "The Simpsons"]);
     });
 
+    it("respects a custom fresh window when classifying shows", () => {
+        const olderShow: TvmazeShow = {
+            ...SHOW_FRESH_AND_UPCOMING,
+            _embedded: {
+                previousepisode: {
+                    id: 8,
+                    name: "Older Episode",
+                    season: 36,
+                    number: 1,
+                    airdate: "2026-05-02",
+                    airstamp: "2026-05-02T20:00:00+00:00",
+                    runtime: 22,
+                },
+            },
+        };
+
+        const defaultEl = document.createElement("div");
+        renderStatusBoard(defaultEl, [olderShow], NOW);
+        expect(defaultEl.querySelector("#heading-fresh")).toBeNull();
+
+        const widerEl = document.createElement("div");
+        renderStatusBoard(widerEl, [olderShow], NOW, "title-asc", 90);
+        expect(widerEl.querySelector("#heading-fresh")).not.toBeNull();
+    });
+
     it("renders the section count chip with the number of shows in that section", () => {
         const el = document.createElement("div");
         renderStatusBoard(el, [SHOW_FRESH_AND_UPCOMING, SHOW_UPCOMING_ONLY], NOW);

@@ -301,9 +301,9 @@ body {
     margin-top: 4px;
 }
 
-/* === Sort control (inside the Settings menu) ======================= */
+/* === Select controls (inside the Settings menu) ==================== */
 
-.sort-select {
+.settings-select {
     display: block;
     width: 100%;
     height: 36px;
