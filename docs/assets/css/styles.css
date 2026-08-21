@@ -339,8 +339,15 @@ a:hover {
     border: 9px solid var(--icon-bg);
     background: var(--panel);
     position: relative;
+    /* Safari sometimes fails to clip a child to overflow:hidden + border-radius
+       (WebKit compositing quirk); the mask forces a correct clip regardless. */
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
+/* Invisible on purpose: an earlier visible version of this dot seemed to
+   affect whether Safari clipped the screenshot correctly. Removing the lazy
+   loading on the image is the real suspected fix, but this costs nothing to
+   keep as a second line of defence while that gets confirmed in real Safari. */
 .screenshot-frame::after {
     content: "";
     position: absolute;
@@ -350,7 +357,7 @@ a:hover {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--icon-ended);
+    background: transparent;
 }
 
 .screenshot-frame img {
@@ -579,7 +586,9 @@ a:hover {
 }
 
 .permissions code {
-    display: inline-block;
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
     color: var(--ink);
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 12.5px;
