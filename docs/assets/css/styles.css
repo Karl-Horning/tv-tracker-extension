@@ -453,6 +453,23 @@ a:hover {
 .faq {
     padding: 96px 0;
     background: var(--panel);
+    position: relative;
+    overflow: hidden;
+}
+
+.faq::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.4;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+}
+
+.faq .wrap {
+    position: relative;
+    z-index: 1;
 }
 
 .faq h2 {
@@ -463,7 +480,7 @@ a:hover {
 
 .faq-item {
     max-width: 640px;
-    margin: 0 auto 28px;
+    margin: 0 auto 36px;
 }
 
 .faq-item:last-child {
@@ -471,14 +488,23 @@ a:hover {
 }
 
 .faq-item h3 {
-    font-size: 16px;
-    margin: 0 0 8px;
+    font-size: 20px;
+    margin: 0 0 10px;
+}
+
+.faq-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
 }
 
 .faq-item p {
     margin: 0;
     color: var(--muted);
-    font-size: 15px;
+    font-size: 17px;
+    line-height: 1.5;
 }
 
 /* === Privacy & permissions =============================================== */
