@@ -626,28 +626,90 @@ a:hover {
 }
 
 .store {
-    padding: 96px 0;
-    background: var(--panel);
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+    padding: 160px 0;
+    background: var(--icon-bg);
     text-align: center;
 }
 
+.store::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.05) 0px,
+        rgba(255, 255, 255, 0.05) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+}
+
+/* Watermark of the app icon itself (rounded square + four dots), repeated and rotated like .hero-pattern. */
+.store::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.12;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cg transform='rotate(15 70 70)'%3E%3Crect x='28' y='28' width='84' height='84' rx='20' fill='none' stroke='%23ffffff' stroke-opacity='0.5' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='12' fill='%2357ab5a'/%3E%3Ccircle cx='90' cy='50' r='12' fill='%23e0a23f'/%3E%3Ccircle cx='50' cy='90' r='12' fill='%2399a4b0'/%3E%3Ccircle cx='90' cy='90' r='12' fill='%23e5534b'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 140px 140px;
+    background-position: -55px -85px;
+}
+
+.store .wrap {
+    position: relative;
+    z-index: 1;
+}
+
+.store-heading {
+    color: #ececea;
+    font-size: 40px;
+    margin: 0 0 20px;
+}
+
+.store-tagline {
+    color: #ececea;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 14px;
+}
+
 .store-coming-soon {
-    color: var(--muted);
+    color: #adbac7;
     font-size: 15px;
-    margin: 0 0 24px;
+    margin: 0 0 48px;
+}
+
+.store-badges {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .store-badge {
     display: block;
-    width: 190px;
+    width: 200px;
     height: auto;
     border-radius: 8px;
-    border: 1px solid var(--divider);
-    box-shadow: 0 2px 8px var(--shadow);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .store a:hover .store-badge {
-    opacity: 0.85;
+    transform: translateY(-3px);
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .store-badge {
+        transition: none;
+    }
 }
 
 /* === Footer =============================================================== */
