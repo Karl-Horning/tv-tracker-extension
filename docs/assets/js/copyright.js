@@ -18,5 +18,5 @@ export function copyrightYearRange(currentYear = new Date().getFullYear()) {
 }
 
 document.querySelectorAll(".footer-meta").forEach((el) => {
-    el.textContent = `© ${copyrightYearRange()}. Released under the MIT License.`;
+    el.textContent = `© ${copyrightYearRange()} Karl Horning. Released under the MIT License.`;
 });
