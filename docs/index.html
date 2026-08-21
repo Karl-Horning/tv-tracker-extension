@@ -114,27 +114,25 @@
                 <div style="background: var(--icon-hiatus)"></div>
             </div>
             <div class="hero-inner">
-                <img
-                    class="hero-badge"
-                    src="assets/icons/icon.png"
-                    alt=""
-                    width="56"
-                    height="56"
-                />
-                <h1>TV Tracker</h1>
+                <h1 class="display">TV Tracker</h1>
                 <p>
-                    A browser extension that groups your shows by what's
-                    happening right now — aired recently, coming up, on
-                    hiatus, or finished. Add a show once and TV Tracker keeps
-                    it up to date.
+                    See when each show last aired, and when it's next on.
                 </p>
                 <div class="hero-actions">
                     <a class="btn btn-primary" href="#store">Get TV Tracker</a>
                 </div>
             </div>
+            <div class="colour-bars" aria-hidden="true">
+                <span style="background: var(--icon-fresh)"></span>
+                <span style="background: var(--icon-upcoming)"></span>
+                <span style="background: var(--icon-hiatus)"></span>
+                <span style="background: var(--icon-ended)"></span>
+                <span style="background: #7c5cbf"></span>
+            </div>
         </div>
 
-        <div class="wrap">
+        <div class="screenshot-band">
+            <div class="wrap">
             <!-- ── Screenshot ───────────────────────────────────── -->
             <div class="screenshot-wrap">
                 <div class="screenshot-frame">
@@ -153,12 +151,13 @@
                     </picture>
                 </div>
             </div>
+            </div>
         </div>
 
         <!-- ── Features ─────────────────────────────────────────── -->
         <div class="features">
             <div class="wrap">
-                <h2>Features</h2>
+                <h2 class="display">Features</h2>
                 <div class="feature-grid">
                     <div class="feature-item">
                         <div class="feature-icon" style="background: var(--fresh-bg); color: var(--fresh)">
@@ -287,7 +286,7 @@
         <!-- ── FAQ ──────────────────────────────────────────────── -->
         <div class="faq">
             <div class="wrap">
-                    <h2>FAQ</h2>
+                    <h2 class="display">FAQ</h2>
                     <div class="faq-item">
                         <h3>Why can't I mark shows as watched?</h3>
                         <p>
@@ -334,7 +333,7 @@
             <!-- ── Privacy & permissions ────────────────────────── -->
             <div class="privacy">
                 <div class="wrap">
-                    <h2>Privacy</h2>
+                    <h2 class="display">Privacy</h2>
                     <p class="privacy-intro">
                         No accounts, no tracking. TV Tracker only talks to the
                         <a href="https://www.tvmaze.com/api">TVmaze API</a> to
@@ -368,7 +367,7 @@
             <!-- ── Store links ──────────────────────────────────── -->
             <div class="store" id="store">
               <div class="wrap">
-                <h2 style="font-size: 24px; margin: 0 0 24px">
+                <h2 class="display" style="font-size: 24px; margin: 0 0 24px">
                     Get TV Tracker
                 </h2>
                 <p class="store-coming-soon">
