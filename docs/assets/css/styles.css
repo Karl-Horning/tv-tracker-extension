@@ -108,10 +108,12 @@ a:hover {
     outline-offset: 2px;
 }
 
-/* The default outline colour falls below 3:1 against the dark hero
-   background, so the hero uses the same accent blue as the extension's
-   own dark theme instead. */
-.hero :focus-visible {
+/* The default outline colour falls below 3:1 against the fixed-dark
+   background these sections share with the hero, so all three use the
+   same accent blue as the extension's own dark theme instead. */
+.hero :focus-visible,
+.store :focus-visible,
+.not-found :focus-visible {
     outline-color: #539bf5;
 }
 
@@ -578,7 +580,7 @@ a:hover {
 
 .permissions code {
     display: inline-block;
-    color: var(--muted);
+    color: var(--ink);
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 12.5px;
     background: var(--blue-bg);
