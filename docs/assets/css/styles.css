@@ -328,35 +328,6 @@ a:hover {
 
 /* === Screenshot ========================================================== */
 
-.screenshot-band {
-    background: var(--bg);
-    position: relative;
-    z-index: 0;
-    padding: 64px 0;
-}
-
-.screenshot-band::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    opacity: 0.5;
-    pointer-events: none;
-    background-image: radial-gradient(var(--divider) 1px, transparent 1px);
-    background-size: 14px 14px;
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black);
-    mask-image: linear-gradient(to bottom, transparent, black);
-}
-
-.screenshot-band .wrap {
-    position: relative;
-    z-index: 1;
-}
-
-.screenshot-wrap {
-    display: flex;
-    justify-content: center;
-}
-
 .screenshot-frame {
     width: 340px;
     max-width: 100%;
@@ -384,6 +355,7 @@ a:hover {
     display: block;
     width: 100%;
     height: auto;
+    border-radius: 17px;
 }
 
 /* === Features ============================================================ */
@@ -418,44 +390,62 @@ a:hover {
     text-align: center;
 }
 
-.feature-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px 32px;
-    max-width: 880px;
-    margin: 0 auto;
-}
-
-.feature-item {
+.feature-spotlight {
     display: flex;
-    gap: 14px;
+    align-items: center;
+    gap: 48px;
+    max-width: 880px;
+    margin: 48px auto 0;
     text-align: left;
 }
 
-.feature-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.feature-spotlight--reverse {
+    flex-direction: row-reverse;
+}
+
+.feature-spotlight-media {
     flex-shrink: 0;
 }
 
-.feature-icon svg {
-    width: 22px;
-    height: 22px;
+.feature-spotlight-text {
+    flex: 1;
 }
 
-.feature-item h3 {
-    margin: 4px 0 4px;
-    font-size: 16px;
+.feature-spotlight-text h3 {
+    font-size: 30px;
+    margin: 0 0 18px;
 }
 
-.feature-item p {
-    margin: 0;
+.feature-spotlight-text p,
+.feature-spotlight-text li {
     color: var(--muted);
-    font-size: 15px;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.feature-spotlight-text p {
+    margin: 0;
+}
+
+.feature-spotlight-text ul {
+    margin: 0;
+    padding-left: 22px;
+}
+
+.feature-spotlight-text li {
+    margin-bottom: 14px;
+}
+
+.feature-spotlight-text li:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 640px) {
+    .feature-spotlight,
+    .feature-spotlight--reverse {
+        flex-direction: column;
+        margin-top: 40px;
+    }
 }
 
 /* === FAQ ==================================================================== */
