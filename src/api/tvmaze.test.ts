@@ -122,11 +122,11 @@ describe("searchShows", () => {
   const FIXTURE_RESULTS: TvmazeSearchResult[] = [
     {
       score: 0.9129073,
-      show: { id: 83, name: "The Simpsons", status: "Running", network: { name: "FOX" } },
+      show: { id: 83, name: "The Simpsons", status: "Running", network: { name: "FOX" }, webChannel: null },
     },
     {
       score: 0.6254818,
-      show: { id: 9999, name: "The Simpsons: Shorts", status: "Ended", network: null },
+      show: { id: 9999, name: "The Simpsons: Shorts", status: "Ended", network: null, webChannel: null },
     },
   ];
 

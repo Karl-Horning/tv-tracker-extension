@@ -10,10 +10,12 @@ import {
     addShow,
     addShows,
     getCachedShows,
+    getFreshWindowDays,
     getSortOrder,
     getTheme,
     getTrackedIds,
     removeShow,
+    setFreshWindowDays,
     setSortOrder,
     setTheme,
     updateCachedShow,
@@ -336,5 +338,30 @@ describe("setTheme", () => {
         await setTheme("dark");
         await setTheme("light");
         expect(await getTheme()).toBe("light");
+    });
+});
+
+describe("getFreshWindowDays", () => {
+    beforeEach(stubChrome);
+    afterEach(() => vi.unstubAllGlobals());
+
+    it("returns 30 when no fresh window has been stored", async () => {
+        expect(await getFreshWindowDays()).toBe(30);
+    });
+
+    it("returns the stored fresh window", async () => {
+        await setFreshWindowDays(60);
+        expect(await getFreshWindowDays()).toBe(60);
+    });
+});
+
+describe("setFreshWindowDays", () => {
+    beforeEach(stubChrome);
+    afterEach(() => vi.unstubAllGlobals());
+
+    it("persists the fresh window across reads", async () => {
+        await setFreshWindowDays(60);
+        await setFreshWindowDays(7);
+        expect(await getFreshWindowDays()).toBe(7);
     });
 });

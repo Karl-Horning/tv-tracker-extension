@@ -9,7 +9,7 @@
  */
 
 import type { TvmazeShow } from "../api/tvmaze";
-import type { SortOrder } from "../filter/classify";
+import { DEFAULT_FRESH_WINDOW_DAYS, type SortOrder } from "../filter/classify";
 
 /** Storage key for the ordered list of tracked show IDs. */
 const KEY_IDS = "trackedIds";
@@ -22,6 +22,9 @@ const KEY_SORT = "sortOrder";
 
 /** Storage key for the user's chosen light/dark appearance. */
 const KEY_THEME = "theme";
+
+/** Storage key for the user's chosen "fresh" window length, in days. */
+const KEY_FRESH_WINDOW = "freshWindowDays";
 
 /** The popup's light/dark appearance. */
 export type Theme = "light" | "dark";
@@ -190,4 +193,27 @@ export async function getTheme(): Promise<Theme | null> {
  */
 export async function setTheme(theme: Theme): Promise<void> {
     await chrome.storage.local.set({ [KEY_THEME]: theme });
+}
+
+/**
+ * Returns the user's chosen "fresh" window length, in days.
+ *
+ * @returns The stored window length, or DEFAULT_FRESH_WINDOW_DAYS if none
+ *   has been set.
+ */
+export async function getFreshWindowDays(): Promise<number> {
+    const result = await chrome.storage.local.get(KEY_FRESH_WINDOW);
+    return (
+        (result[KEY_FRESH_WINDOW] as number | undefined) ??
+        DEFAULT_FRESH_WINDOW_DAYS
+    );
+}
+
+/**
+ * Stores the user's chosen "fresh" window length, in days.
+ *
+ * @param days - The window length to persist.
+ */
+export async function setFreshWindowDays(days: number): Promise<void> {
+    await chrome.storage.local.set({ [KEY_FRESH_WINDOW]: days });
 }

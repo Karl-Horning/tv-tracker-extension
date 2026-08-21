@@ -8,7 +8,9 @@
         "strict": true,
         "skipLibCheck": true,
         "isolatedModules": true,
-        "noEmit": true
+        "noEmit": true,
+        "allowJs": true,
+        "checkJs": true
     },
-    "include": ["docs/**/*.ts"]
+    "include": ["docs/**/*.ts", "docs/**/*.js"]
 }

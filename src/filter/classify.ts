@@ -12,7 +12,7 @@ import type { TvmazeShow } from "../api/tvmaze";
 /**
  * Status group identifiers corresponding to the four popup sections.
  *
- * - `fresh`    – previous episode aired within the last 30 days
+ * - `fresh`    – previous episode aired within the fresh window
  * - `upcoming` – next episode is scheduled
  * - `hiatus`   – active show with no recent or upcoming episodes
  * - `ended`    – show has concluded with no upcoming episodes
@@ -26,6 +26,9 @@ export type SortOrder =
     | "airdate-asc"
     | "airdate-desc";
 
+/** Default number of days a previous episode counts as "fresh". */
+export const DEFAULT_FRESH_WINDOW_DAYS = 30;
+
 /**
  * Returns the status groups a show belongs to.
  *
@@ -34,21 +37,24 @@ export type SortOrder =
  * and "ended" are returned only when neither "fresh" nor "upcoming" applies.
  *
  * @param show - A TvmazeShow with embedded episode data.
- * @param now  - Reference date for the 30-day window (defaults to now).
+ * @param now  - Reference date for the fresh window (defaults to now).
+ * @param freshWindowDays - How many days back a previous episode still counts
+ *   as fresh (defaults to DEFAULT_FRESH_WINDOW_DAYS).
  * @returns Groups the show belongs to, in display order.
  */
 export function classifyShow(
     show: TvmazeShow,
     now: Date = new Date(),
+    freshWindowDays: number = DEFAULT_FRESH_WINDOW_DAYS,
 ): ShowGroup[] {
     const groups: ShowGroup[] = [];
     const todayStr = toDateString(now);
-    const thirtyDaysAgoStr = toDateString(
-        new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000),
+    const windowStartStr = toDateString(
+        new Date(now.getTime() - freshWindowDays * 24 * 60 * 60 * 1000),
     );
 
     const prev = show._embedded.previousepisode;
-    if (prev && prev.airdate >= thirtyDaysAgoStr && prev.airdate <= todayStr) {
+    if (prev && prev.airdate >= windowStartStr && prev.airdate <= todayStr) {
         groups.push("fresh");
     }
 

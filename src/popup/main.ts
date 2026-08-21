@@ -10,13 +10,15 @@ import "./style.css";
 import { buildBackup } from "../backup/backup";
 import { fetchShow, searchShows } from "../api/tvmaze";
 import { refreshAllShows } from "../background/refresh";
-import type { SortOrder } from "../filter/classify";
+import { DEFAULT_FRESH_WINDOW_DAYS, type SortOrder } from "../filter/classify";
 import {
     addShow,
     getCachedShows,
+    getFreshWindowDays,
     getSortOrder,
     getTheme,
     removeShow,
+    setFreshWindowDays,
     setSortOrder,
     setTheme,
     type Theme,
@@ -57,6 +59,9 @@ const $themeSwitch = document.getElementById(
 const $sortSelect = document.getElementById(
     "sort-select",
 ) as HTMLSelectElement;
+const $freshWindowSelect = document.getElementById(
+    "fresh-window-select",
+) as HTMLSelectElement;
 const $btnRefresh = document.getElementById("btn-refresh") as HTMLButtonElement;
 const $btnExport = document.getElementById("btn-export") as HTMLButtonElement;
 const $btnImport = document.getElementById("btn-import") as HTMLButtonElement;
@@ -65,6 +70,7 @@ const $lastUpdated = document.getElementById("last-updated") as HTMLElement;
 // ── State ─────────────────────────────────────────────────────────────
 
 let currentSort: SortOrder = "title-asc";
+let currentFreshWindow: number = DEFAULT_FRESH_WINDOW_DAYS;
 
 // ── Render ────────────────────────────────────────────────────────────
 
@@ -76,7 +82,13 @@ async function loadAndRender(): Promise<void> {
     const shows = await getCachedShows();
     const hasShows = shows.length > 0;
 
-    renderStatusBoard($sections, shows, new Date(), currentSort);
+    renderStatusBoard(
+        $sections,
+        shows,
+        new Date(),
+        currentSort,
+        currentFreshWindow,
+    );
     $sections.hidden = false;
     $emptyState.hidden = hasShows;
     $appFooter.hidden = !hasShows;
@@ -251,6 +263,17 @@ async function handleSortChange(): Promise<void> {
     await loadAndRender();
 }
 
+// ── Fresh window ──────────────────────────────────────────────────────
+
+$freshWindowSelect.addEventListener("change", () => void handleFreshWindowChange());
+
+/** Applies the selected fresh window, persists it, and re-renders. */
+async function handleFreshWindowChange(): Promise<void> {
+    currentFreshWindow = Number($freshWindowSelect.value);
+    await setFreshWindowDays(currentFreshWindow);
+    await loadAndRender();
+}
+
 // ── Import / export ──────────────────────────────────────────────────
 
 $btnRefresh.addEventListener("click", () => void handleRefreshClick());
@@ -301,8 +324,8 @@ chrome.storage.onChanged.addListener((_changes, areaName) => {
 // ── Init ──────────────────────────────────────────────────────────────
 
 /**
- * Loads the saved theme and sort preference, applies them, then renders
- * the status board.
+ * Loads the saved theme, sort order, and fresh window, applies them, then
+ * renders the status board.
  *
  * Falls back to the operating system's light/dark preference when the user
  * has never made an explicit choice, without persisting that fallback.
@@ -316,6 +339,10 @@ async function init(): Promise<void> {
 
     currentSort = await getSortOrder();
     $sortSelect.value = currentSort;
+
+    currentFreshWindow = await getFreshWindowDays();
+    $freshWindowSelect.value = String(currentFreshWindow);
+
     await loadAndRender();
 }
 

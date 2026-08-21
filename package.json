@@ -1,10 +1,11 @@
 {
   "name": "tv-tracker-extension",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "docs:serve": "python3 -m http.server 8000 --directory docs",
     "build": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json && tsc -p tsconfig.docs.json && vite build",
     "test": "vitest run",
     "test:watch": "vitest",

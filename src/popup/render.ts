@@ -5,8 +5,13 @@
  * no module-level state.
  */
 
-import type { TvmazeSearchResult, TvmazeShow } from "../api/tvmaze";
-import { classifyShow, type ShowGroup, type SortOrder } from "../filter/classify";
+import { getChannelName, type TvmazeSearchResult, type TvmazeShow } from "../api/tvmaze";
+import {
+    classifyShow,
+    DEFAULT_FRESH_WINDOW_DAYS,
+    type ShowGroup,
+    type SortOrder,
+} from "../filter/classify";
 
 // ── SVG icon strings ─────────────────────────────────────────────────
 
@@ -83,12 +88,15 @@ function parseSvg(markup: string): SVGSVGElement {
  * @param shows - The list of tracked shows to classify and render.
  * @param now - Reference time for classification; defaults to the current time.
  * @param sortOrder - How to order shows within each section; defaults to title (A–Z).
+ * @param freshWindowDays - How many days back a previous episode still counts
+ *   as fresh; defaults to DEFAULT_FRESH_WINDOW_DAYS.
  */
 export function renderStatusBoard(
     container: HTMLElement,
     shows: TvmazeShow[],
     now: Date = new Date(),
     sortOrder: SortOrder = "title-asc",
+    freshWindowDays: number = DEFAULT_FRESH_WINDOW_DAYS,
 ): void {
     const groups: Record<ShowGroup, TvmazeShow[]> = {
         fresh: [],
@@ -98,7 +106,7 @@ export function renderStatusBoard(
     };
 
     for (const show of shows) {
-        for (const group of classifyShow(show, now)) {
+        for (const group of classifyShow(show, now, freshWindowDays)) {
             groups[group].push(show);
         }
     }
@@ -151,8 +159,7 @@ export function renderSearchResults(
 
         const meta = document.createElement("span");
         meta.className = "search-result-meta";
-        const network = result.show.network?.name ?? "Streaming";
-        meta.textContent = `${network} · ${result.show.status}`;
+        meta.textContent = `${getChannelName(result.show)} · ${result.show.status}`;
 
         btn.append(name, meta);
         li.append(btn);
@@ -265,15 +272,21 @@ function buildShowRow(show: TvmazeShow, group: ShowGroup): HTMLLIElement {
 
     const namePara = document.createElement("p");
     namePara.className = "show-name";
-    namePara.textContent = show.name;
+    if (show.url) {
+        const link = document.createElement("a");
+        link.className = "show-name-link";
+        link.href = show.url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = show.name;
+        namePara.append(link);
+    } else {
+        namePara.textContent = show.name;
+    }
 
     const epPara = document.createElement("p");
     epPara.className = `show-ep${muted ? " show-ep--muted" : ""}`;
-    epPara.append(parseSvg(GROUP_ICON[group]));
-
-    const epText = document.createElement("span");
-    epText.textContent = buildEpisodeText(show, group);
-    epPara.append(epText);
+    epPara.append(buildEpisodeLines(show, group));
 
     infoDiv.append(namePara, epPara);
 
@@ -285,40 +298,136 @@ function buildShowRow(show: TvmazeShow, group: ShowGroup): HTMLLIElement {
     removeBtn.dataset.showName = show.name;
     removeBtn.append(parseSvg(SVG_TRASH));
 
-    li.append(infoDiv, removeBtn);
+    li.append(buildThumbnail(show, group), infoDiv, removeBtn);
     return li;
 }
 
 /**
- * Returns the episode description line for a show row.
+ * Builds the leading thumbnail for a show row.
+ *
+ * Uses the show's TVmaze poster when available. Falls back to the group's
+ * status icon, in the same slot, when the show has no image.
+ *
+ * @param show - The show to build a thumbnail for.
+ * @param group - The group context, used to pick the fallback icon.
+ * @returns An img or icon element sized for the row's thumbnail slot.
+ */
+function buildThumbnail(show: TvmazeShow, group: ShowGroup): HTMLElement {
+    if (show.image?.medium) {
+        const img = document.createElement("img");
+        img.className = "show-thumb";
+        img.src = show.image.medium;
+        img.alt = "";
+        img.loading = "lazy";
+        return img;
+    }
+
+    const fallback = document.createElement("span");
+    fallback.className = "show-thumb show-thumb--icon";
+    fallback.append(parseSvg(GROUP_ICON[group]));
+    return fallback;
+}
+
+/** One show row's episode text, split into separately styleable lines. */
+interface EpisodeLines {
+    /** Zero-padded episode code, for example "S04E05". Null when there's no episode to show. */
+    code: string | null;
+    /** Episode name, or a fallback like "Recently aired" when there's no episode. */
+    title: string;
+    /** Air date, with any status note appended (for example "— renewal pending"). Null when there's no episode. */
+    date: string | null;
+}
+
+/**
+ * Builds the title, channel, and date lines for a show row.
+ *
+ * Split into separate lines — rather than one long sentence — so each
+ * piece of information can be scanned on its own rather than parsed out
+ * of a run-on string.
+ *
+ * @param show - The show to build episode lines for.
+ * @param group - Determines which episode (previous or next) is shown.
+ * @returns A span containing the title, channel, and date lines.
+ */
+function buildEpisodeLines(show: TvmazeShow, group: ShowGroup): HTMLSpanElement {
+    const lines = getEpisodeLines(show, group);
+
+    const wrap = document.createElement("span");
+    wrap.className = "show-ep-lines";
+
+    const titleLine = document.createElement("span");
+    titleLine.className = "show-ep-title";
+    if (lines.code) {
+        const codeSpan = document.createElement("span");
+        codeSpan.className = "show-ep-code";
+        codeSpan.textContent = lines.code;
+        titleLine.append(codeSpan, ` “${lines.title}”`);
+    } else {
+        titleLine.textContent = lines.title;
+    }
+    wrap.append(titleLine);
+
+    const channelLine = document.createElement("span");
+    channelLine.className = "show-ep-detail";
+    channelLine.textContent = getChannelName(show);
+    wrap.append(channelLine);
+
+    if (lines.date) {
+        const dateLine = document.createElement("span");
+        dateLine.className = "show-ep-detail";
+        dateLine.textContent = lines.date;
+        wrap.append(dateLine);
+    }
+
+    return wrap;
+}
+
+/**
+ * Returns the episode code, title, and date text for a show row.
  *
  * @param show - The show whose episode data to format.
  * @param group - Determines which episode (previous or next) is shown.
- * @returns A plain text description string.
+ * @returns The episode's code, title, and date as separate strings.
  */
-function buildEpisodeText(show: TvmazeShow, group: ShowGroup): string {
+function getEpisodeLines(show: TvmazeShow, group: ShowGroup): EpisodeLines {
     const { previousepisode: prev, nextepisode: next } = show._embedded;
 
     switch (group) {
         case "fresh":
             return prev
-                ? `${formatEpisodeCode(prev.season, prev.number)} “${prev.name}” — ${formatDate(prev.airdate)}`
-                : "Recently aired";
+                ? {
+                      code: formatEpisodeCode(prev.season, prev.number),
+                      title: prev.name,
+                      date: formatDate(prev.airdate),
+                  }
+                : { code: null, title: "Recently aired", date: null };
 
         case "upcoming":
             return next
-                ? `${formatEpisodeCode(next.season, next.number)} “${next.name}” — ${formatDate(next.airdate)}`
-                : "Coming soon";
+                ? {
+                      code: formatEpisodeCode(next.season, next.number),
+                      title: next.name,
+                      date: formatDate(next.airdate),
+                  }
+                : { code: null, title: "Coming soon", date: null };
 
         case "hiatus":
             return prev
-                ? `${formatEpisodeCode(prev.season, prev.number)} “${prev.name}” — last aired ${formatDate(prev.airdate)}${show.status === "To Be Determined" ? " — renewal pending" : ""}`
-                : "No episodes aired";
+                ? {
+                      code: formatEpisodeCode(prev.season, prev.number),
+                      title: prev.name,
+                      date: `Last aired ${formatDate(prev.airdate)}${show.status === "To Be Determined" ? " — renewal pending" : ""}`,
+                  }
+                : { code: null, title: "No episodes aired", date: null };
 
         case "ended":
             return prev
-                ? `${formatEpisodeCode(prev.season, prev.number)} “${prev.name}” — last aired ${formatDate(prev.airdate)} — series ended`
-                : "No episodes aired";
+                ? {
+                      code: formatEpisodeCode(prev.season, prev.number),
+                      title: prev.name,
+                      date: `Last aired ${formatDate(prev.airdate)} — series ended`,
+                  }
+                : { code: null, title: "No episodes aired", date: null };
     }
 }
 
